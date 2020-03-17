@@ -35,34 +35,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
     <Compile Include="Behaviors\BindableSelectedItemBehavior.cs" />
     <Compile Include="Behaviors\TreeViewDragAndDropBehavior.cs" />
     <Compile Include="Behaviors\FileViewModelDragDropBehavior.cs" />
     <Compile Include="Behaviors\TextBoxBehavior.cs" />
+    <Compile Include="Commands\CommandExtensions.cs" />
     <Compile Include="Commands\DelegateAsyncCommand.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
     <Compile Include="Commands\IDelegateAsyncCommand.cs" />
@@ -87,10 +66,6 @@
       <DependentUpon>ParametersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Visual\DragAdorner.cs" />
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -99,14 +74,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="View\GameTreeControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\ParametersView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -137,18 +104,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\edit.png" />
-    <Resource Include="Images\explorer.png" />
-    <Resource Include="Images\new.png" />
-    <Resource Include="Images\refresh.png" />
-    <Resource Include="Images\file.png" />
-    <Resource Include="Images\folder.png" />
-    <Resource Include="Images\openfolder.png" />
-    <Resource Include="Images\delete.png" />
     <Content Include="Images\Sekiro.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Images\synchro.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FromSoftwareModel\FromSoftwareModel.csproj">
@@ -174,4 +132,30 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ReferencePath Include="E:\users\maxim\documents\visual studio 2015\Projects\FromSoftwareGameSaves\FromSofwareFileManager\bin\Debug\FromSoftwareFileManager.dll" />
+    <ReferencePath Include="E:\users\maxim\documents\visual studio 2015\Projects\FromSoftwareGameSaves\FromSoftwareModel\bin\Debug\FromSoftwareModel.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\Microsoft.CSharp.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\mscorlib.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\PresentationCore.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\PresentationFramework.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.Data.DataSetExtensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.Data.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.Net.Http.dll" />
+    <ReferencePath Include="E:\users\maxim\documents\visual studio 2015\Projects\FromSoftwareGameSaves\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.Xaml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.Xml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.Xml.Linq.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\WindowsBase.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="E:\users\maxim\documents\visual studio 2015\Projects\FromSoftwareGameSaves\FromSoftwareGameSaves\obj\Debug\MainWindow.g.cs" />
+    <Compile Include="E:\users\maxim\documents\visual studio 2015\Projects\FromSoftwareGameSaves\FromSoftwareGameSaves\obj\Debug\View\GameTreeControl.g.cs" />
+    <Compile Include="E:\users\maxim\documents\visual studio 2015\Projects\FromSoftwareGameSaves\FromSoftwareGameSaves\obj\Debug\View\ParametersView.g.cs" />
+    <Compile Include="E:\users\maxim\documents\visual studio 2015\Projects\FromSoftwareGameSaves\FromSoftwareGameSaves\obj\Debug\App.g.cs" />
+    <Compile Include="E:\users\maxim\documents\visual studio 2015\Projects\FromSoftwareGameSaves\FromSoftwareGameSaves\obj\Debug\FromSoftwareGameSaves_Content.g.cs" />
+    <Compile Include="E:\users\maxim\documents\visual studio 2015\Projects\FromSoftwareGameSaves\FromSoftwareGameSaves\obj\Debug\GeneratedInternalTypeHelper.g.cs" />
+  </ItemGroup>
 </Project>

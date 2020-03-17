@@ -1,11 +1,12 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 using FromSoftwareGameSaves.Utils;
 
 namespace FromSoftwareGameSaves.ViewModel
 {
     public sealed class DragDropFileViewModel
     {
-        public void DoDragDrop(DragDropInfoViewModel<FileViewModel> dragDropInfoViewModel)
+        public async Task DoDragDrop(DragDropInfoViewModel<FileViewModel> dragDropInfoViewModel)
         {
             var targetItemRootPath = dragDropInfoViewModel.TargetItem.RootPath;
             var sourceItemRootPath = dragDropInfoViewModel.SourceItem.RootPath;
@@ -18,16 +19,17 @@ namespace FromSoftwareGameSaves.ViewModel
 
             if (dragDropInfoViewModel.TargetItem.IsDirectory == true)
             {
-                var fileViewModel = dragDropInfoViewModel.TargetItem.AcceptCopy(dragDropInfoViewModel.SourceItem);
-                fileViewModel?.ExpandAll();
+                var newFileViewModel = await dragDropInfoViewModel.TargetItem.AcceptCopyAsync(dragDropInfoViewModel.SourceItem);
+                if(newFileViewModel!= null)
+                    await newFileViewModel.ExpandAllAsync();
             }
             else
             {
-                var treeViewItemViewModel = dragDropInfoViewModel.TargetItem.Parent as FileViewModel;
-                if (treeViewItemViewModel != null && treeViewItemViewModel.IsDirectory == true)
+                if (dragDropInfoViewModel.TargetItem.Parent is FileViewModel treeViewItemViewModel && treeViewItemViewModel.IsDirectory == true)
                 {
-                    var fileViewModel = treeViewItemViewModel.AcceptCopy(dragDropInfoViewModel.SourceItem);
-                    fileViewModel?.ExpandAll();
+                    var newFileViewModel = await treeViewItemViewModel.AcceptCopyAsync(dragDropInfoViewModel.SourceItem);
+                    if (newFileViewModel != null)
+                        await newFileViewModel.ExpandAllAsync();
                 }
             }
         }       

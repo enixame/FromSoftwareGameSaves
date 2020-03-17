@@ -1,12 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using FromSoftwareFileManager;
+using FromSoftwareGameSaves.Commands;
 using FromSoftwareGameSaves.Model;
 using FromSoftwareGameSaves.Repository;
 using FromSoftwareGameSaves.Utils;
-using FromSoftwareModel;
 
 namespace FromSoftwareGameSaves.ViewModel
 {
@@ -20,9 +22,9 @@ namespace FromSoftwareGameSaves.ViewModel
     {
         #region Data
 
-        private static readonly TreeViewItemViewModel DummyChild = new TreeViewItemViewModel();
+        protected static readonly TreeViewItemViewModel DummyChild = new TreeViewItemViewModel();
 
-        private bool _isExpanded;
+        protected bool IsExpandedField;
         private bool _isSelected;
         private bool _isInEditMode;
 
@@ -76,24 +78,26 @@ namespace FromSoftwareGameSaves.ViewModel
         /// </summary>
         public bool IsExpanded
         {
-            get { return _isExpanded; }
+            get => IsExpandedField;
             set
             {
-                if (value != _isExpanded)
+                if (value != IsExpandedField)
                 {
-                    _isExpanded = value;
+                    IsExpandedField = value;
                     OnPropertyChanged("IsExpanded");
                 }
 
                 // Expand all the way up to the root.
-                if (_isExpanded && Parent != null)
+                if (IsExpandedField && Parent != null)
                     Parent.IsExpanded = true;
 
                 // Lazy load the child items, if necessary.
-                if (!HasDummyChild) return;
+                if (!HasDummyChild)
+                    return;
 
                 Children.Remove(DummyChild);
-                LoadChildren();
+
+                LoadChildrenAsync().ConfigureAwait(false);
             }
         }
 
@@ -107,7 +111,7 @@ namespace FromSoftwareGameSaves.ViewModel
         /// </summary>
         public bool IsSelected
         {
-            get { return _isSelected; }
+            get => _isSelected;
             set
             {
                 if (value != _isSelected)
@@ -130,7 +134,7 @@ namespace FromSoftwareGameSaves.ViewModel
 
         public bool IsInEditMode
         {
-            get { return _isInEditMode; }
+            get => _isInEditMode;
             set
             {
                 _isInEditMode = value;
@@ -142,21 +146,26 @@ namespace FromSoftwareGameSaves.ViewModel
 
         public bool CanBeEdited { get; protected set; }
 
-        #region LoadChildren
+        #region LoadChildrenAsync
 
         /// <summary>
         /// Invoked when the child items need to be loaded on demand.
         /// </summary>
-        protected void LoadChildren()
+        protected async Task LoadChildrenAsync()
         {
             if (!FromSoftwareFile.IsDirectory)
                 return;
 
-            foreach (var child in FileRepository.LoadChildren(FromSoftwareFile))
-                Children.Add(new FileViewModel(Root, child, this));
+            foreach (var child in await FileRepository.LoadChildrenAsync(FromSoftwareFile))
+            {
+                await UiDispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                {
+                    Children.Add(new FileViewModel(Root, child, this));
+                }));
+            }
         }
 
-        #endregion // LoadChildren
+        #endregion // LoadChildrenAsync
 
         #region Parent
 
@@ -216,33 +225,37 @@ namespace FromSoftwareGameSaves.ViewModel
                 var file = new FromSoftwareFile(gameFile.RootDirectory, gameFile.FileSearchPattern,  fileName, true, filePath);
                 var treeViewItemViewModel = new FileViewModel(Root, file, this) {IsSelected = true, IsInEditMode = isInEditMode };
                 Children.Add(treeViewItemViewModel);
+
+                treeViewItemViewModel.ExpandAsync().ConfigureAwait(false);
             }
-
-            IsExpanded = true;
-
-            if (isDirectoryLoaded) return;
-
-            var newItem = Children.FirstOrDefault(child => child.FromSoftwareFile.FileName.Equals(fileName));
-            if (newItem == null) return;
-
-            newItem.IsSelected = true;
-            newItem.IsInEditMode = isInEditMode;
         }
 
-        public virtual void Refresh()
+        protected async Task ExpandAsync()
+        {
+            IsExpandedField = true;
+            OnPropertyChanged("IsExpanded");
+
+            await UiDispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => { Children.Remove(DummyChild); }));
+            await LoadChildrenAsync();
+        }
+
+        public async Task RefreshAsync()
         {
             if (HasDummyChild)
                 return;
 
-            var wasExpanded = IsExpanded;
+            var wasExpanded = IsExpandedField;
+            IsExpandedField = false;
+            OnPropertyChanged("IsExpanded");
 
-            IsExpanded = false;
-            Children.Clear();
-
-            LoadChildren();
+            await UiDispatcher.BeginInvoke(new Action(() => { Children.Clear(); }));
+            await LoadChildrenAsync();
 
             if (wasExpanded)
-                IsExpanded = true;
+            {
+                IsExpandedField = true;
+                OnPropertyChanged("IsExpanded");
+            }
         }
 
         #endregion // actions

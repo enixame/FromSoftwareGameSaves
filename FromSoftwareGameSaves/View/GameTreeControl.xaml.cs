@@ -1,5 +1,4 @@
 ﻿using System.Windows.Controls;
-using FromSoftwareGameSaves.Repository;
 using FromSoftwareGameSaves.ViewModel;
 
 namespace FromSoftwareGameSaves.View
@@ -13,8 +12,7 @@ namespace FromSoftwareGameSaves.View
         {
             InitializeComponent();
 
-            var roots = FileRepository.LoadRootFiles();
-            var viewModel = new GameTreeViewModel(roots);
+            var viewModel = new GameTreeViewModel();
             DataContext = viewModel;
         }
     }
