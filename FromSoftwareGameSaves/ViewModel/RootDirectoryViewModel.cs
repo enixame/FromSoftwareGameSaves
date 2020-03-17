@@ -6,15 +6,15 @@ namespace FromSoftwareGameSaves.ViewModel
 {
     public class RootDirectoryViewModel : TreeViewItemViewModel
     {
-        public RootDirectoryViewModel(ViewModelBase root, File file)
+        public RootDirectoryViewModel(ViewModelBase root, FromSoftwareFile fromSoftwareFile)
             : base(root, null, true)
         {
-            File = file;
+            FromSoftwareFile = fromSoftwareFile;
             CanBeEdited = false;
-            ImagePath = ImageHelper.BuildImageSource(file.FileName, ImageHelper.ImageExtensionJpg);
+            ImagePath = ImageHelper.BuildImageSource(fromSoftwareFile.FileName, ImageHelper.ImageExtensionJpg);
         }
 
-        public string RootName => File.FileName;
+        public string RootName => FromSoftwareFile.FileName;
 
         public ImageSource ImagePath { get; }
     }

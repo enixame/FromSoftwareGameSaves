@@ -15,20 +15,20 @@ namespace FromSoftwareGameSaves.Test
         [TestCase(null)]
         public void FromSoftwareGamePathGetFilesTestsThrowsUnauthorized(string gamePath)
         {
-            Assert.Throws<UnauthorizedAccessException>(() => FromSoftwareFileSearch.GetDirectories(gamePath));   
+            Assert.Throws<UnauthorizedAccessException>(() => FromSoftwareFileSearch.GetDirectories(gamePath, FromSoftwareFileInfo.AppDataPath));   
         }
 
         [Test]
         public void FromSoftwareGamePathGetFilesTestsThrowsNotFound()
         {
-            Assert.Throws<DirectoryNotFoundException>(() => FromSoftwareFileSearch.GetFiles("toto", FromSoftwareFileInfo.FileSearchpattern));
+            Assert.Throws<DirectoryNotFoundException>(() => FromSoftwareFileSearch.GetFiles("toto", FromSoftwareFileInfo.FileSearchPattern, FromSoftwareFileInfo.AppDataPath));
         }
 
         [TestCase("DarkSoulsIII")]
         [TestCase("Sekiro")]
         public void FromSoftwareGamePathGetFilesTestsDoesNotThrowException(string gamePath)
         {
-            string[] files = FromSoftwareFileSearch.GetFiles(gamePath, FromSoftwareFileInfo.FileSearchpattern);
+            string[] files = FromSoftwareFileSearch.GetFiles(gamePath, FromSoftwareFileInfo.FileSearchPattern, FromSoftwareFileInfo.AppDataPath);
             Assert.IsNotNull(files);
             Assert.IsTrue(files.Length == 0);
         }
@@ -37,13 +37,13 @@ namespace FromSoftwareGameSaves.Test
         [TestCase("Sekiro")]
         public void FromSoftwareGamePathGetDirectoriesTestsDoesNotThrowException(string gamePath)
         {
-            string[] files = FromSoftwareFileSearch.GetDirectories(gamePath);
+            string[] files = FromSoftwareFileSearch.GetDirectories(gamePath, FromSoftwareFileInfo.AppDataPath);
             Assert.IsNotNull(files);
             Assert.IsTrue(files.Length > 0);
             Console.Out.WriteLine($"files length: {files.Length}");
             foreach (string file in files)
             {
-                Console.Out.WriteLine($"file: {file}");
+                Console.Out.WriteLine($"fromSoftwareFile: {file}");
             }
         }
     }

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace FileSystemManager
+namespace FromSoftwareFileManager
 {
     public static class FileSystem
     {
@@ -61,14 +61,14 @@ namespace FileSystemManager
             
             // create files
             foreach (var file in Directory.GetFiles(sourcePath, fileExtension, SearchOption.AllDirectories))
-                File.Copy(file, file.Replace(sourcePath, destPath), true);
+                CopyFile(file, file.Replace(sourcePath, destPath));
         }
 
         private static bool CopyFile(string sourcePath, string destPath)
         {
             if (File.Exists(destPath))
                 throw new InvalidOperationException($"File '{Path.GetFileName(destPath)}' already exists.");
-            File.Copy(sourcePath, destPath);
+            File.Copy(sourcePath, destPath, true);
             return true;
         }
 

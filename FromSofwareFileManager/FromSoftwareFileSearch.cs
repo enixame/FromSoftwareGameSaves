@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using FromSoftwareModel;
 
 namespace FromSoftwareFileManager
 {
@@ -9,28 +8,26 @@ namespace FromSoftwareFileManager
         
         private static readonly string[] Empty = new string[0];
 
-        public static string[] GetFiles(string gamePath, string fileSearchpattern)
+        public static string[] GetFiles(string gamePath, string fileSearchPattern, string rootPath)
         {
-            if(string.IsNullOrEmpty(fileSearchpattern) || !fileSearchpattern.Equals(FromSoftwareFileInfo.FileSearchpattern))
+            if(string.IsNullOrEmpty(fileSearchPattern))
                 return Empty;
 
-            SearchOption searchOption;
-            GetSearchOption(gamePath, out searchOption);
+            GetSearchOption(gamePath, out SearchOption searchOption);
 
-            string fullPath = FromSoftwareFileInfo.AppDataPath;
+            string fullPath = rootPath;
             if(!string.IsNullOrEmpty(gamePath))
-                fullPath = Path.Combine(FromSoftwareFileInfo.AppDataPath, gamePath);
-            return Directory.GetFiles(fullPath, fileSearchpattern, searchOption);
+                fullPath = Path.Combine(rootPath, gamePath);
+            return Directory.GetFiles(fullPath, fileSearchPattern, searchOption);
         }
 
-        public static string[] GetDirectories(string gamePath)
+        public static string[] GetDirectories(string gamePath, string rootPath)
         {
-            SearchOption searchOption;
-            GetSearchOption(gamePath, out searchOption);
+            GetSearchOption(gamePath, out SearchOption searchOption);
 
-            string fullPath = FromSoftwareFileInfo.AppDataPath;
+            string fullPath = rootPath;
             if (!string.IsNullOrEmpty(gamePath))
-                fullPath = Path.Combine(FromSoftwareFileInfo.AppDataPath, gamePath);
+                fullPath = Path.Combine(rootPath, gamePath);
            
             return Directory.GetDirectories(fullPath, "*.*", searchOption);
         }

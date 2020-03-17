@@ -1,8 +1,9 @@
 ﻿namespace FromSoftwareGameSaves.Model
 {
-    public sealed class File
+    public sealed class FromSoftwareFile : GameFile
     {
-        public File(string fileName, bool isDirectory, string path)
+        public FromSoftwareFile(string rootDirectory, string fileSearchPattern, string fileName, bool isDirectory, string path) 
+            : base(rootDirectory, fileSearchPattern)
         {
             FileName = fileName;
             IsDirectory = isDirectory;

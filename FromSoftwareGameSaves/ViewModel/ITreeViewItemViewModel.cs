@@ -12,7 +12,7 @@ namespace FromSoftwareGameSaves.ViewModel
 
         ViewModelBase Root { get; }
 
-        File File { get; }
+        FromSoftwareFile FromSoftwareFile { get; }
         string RootPath { get; }
 
         bool HasDummyChild { get; }
