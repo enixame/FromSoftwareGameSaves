@@ -2,10 +2,10 @@
 using System.IO;
 using System.Linq;
 using System.Windows;
-using FileSystemManager;
+using FromSoftwareFileManager;
+using FromSoftwareGameSaves.Model;
 using FromSoftwareGameSaves.Utils;
 using FromSoftwareModel;
-using File = FromSoftwareGameSaves.Model.File;
 
 namespace FromSoftwareGameSaves.ViewModel
 {
@@ -13,13 +13,13 @@ namespace FromSoftwareGameSaves.ViewModel
     {
         private string _fileName;
 
-        public FileViewModel(ViewModelBase root, File file, ITreeViewItemViewModel parent) 
-            : base(root, parent, file.IsDirectory)
+        public FileViewModel(ViewModelBase root, FromSoftwareFile fromSoftwareFile, ITreeViewItemViewModel parent) 
+            : base(root, parent, fromSoftwareFile.IsDirectory)
         {
-            File = file;
+            FromSoftwareFile = fromSoftwareFile;
             CanBeEdited = true;
-            _backupFileName = file.FileName;
-            FileName = file.FileName;
+            _backupFileName = fromSoftwareFile.FileName;
+            FileName = fromSoftwareFile.FileName;
         }
 
         private string _backupFileName;
@@ -37,7 +37,7 @@ namespace FromSoftwareGameSaves.ViewModel
             }
         }
 
-        public override bool? IsDirectory => File.IsDirectory;
+        public override bool? IsDirectory => FromSoftwareFile.IsDirectory;
 
         public override void Cancel()
         {
@@ -47,13 +47,13 @@ namespace FromSoftwareGameSaves.ViewModel
 
         public override void Commit()
         {
-            var pathSource = Path.Combine(File.Path, File.FileName);
-            var pathDest = Path.Combine(File.Path, _fileName);
+            var pathSource = Path.Combine(FromSoftwareFile.Path, FromSoftwareFile.FileName);
+            var pathDest = Path.Combine(FromSoftwareFile.Path, _fileName);
 
             try
             {
-                var oldPath = Path.Combine(FromSoftwareFileInfo.AppDataPath, pathSource);
-                var newPath = Path.Combine(FromSoftwareFileInfo.AppDataPath, pathDest);
+                var oldPath = Path.Combine(FromSoftwareFile.RootDirectory, pathSource);
+                var newPath = Path.Combine(FromSoftwareFile.RootDirectory, pathDest);
 
                 var isDirectoryChanged = FileSystem.Rename(oldPath, newPath);
                 if (!isDirectoryChanged)
@@ -62,7 +62,7 @@ namespace FromSoftwareGameSaves.ViewModel
                     return;
                 }
 
-                File = new File(_fileName, File.IsDirectory, File.Path);
+                FromSoftwareFile = new FromSoftwareFile(FromSoftwareFile.RootDirectory, FromSoftwareFile.FileSearchPattern, _fileName, FromSoftwareFile.IsDirectory, FromSoftwareFile.Path);
                 _backupFileName = _fileName;
 
                 RefreshPath(this);
@@ -77,7 +77,7 @@ namespace FromSoftwareGameSaves.ViewModel
 
         private static void RefreshPath(ITreeViewItemViewModel treeViewItemViewModel)
         {
-            if (!treeViewItemViewModel.File.IsDirectory)
+            if (!treeViewItemViewModel.FromSoftwareFile.IsDirectory)
                 return;
 
             if (treeViewItemViewModel.Children == null)
@@ -89,11 +89,11 @@ namespace FromSoftwareGameSaves.ViewModel
             if (treeViewItemViewModel.HasDummyChild)
                 return;
 
-            var childPath = Path.Combine(treeViewItemViewModel.File.Path, treeViewItemViewModel.File.FileName);
+            var childPath = Path.Combine(treeViewItemViewModel.FromSoftwareFile.Path, treeViewItemViewModel.FromSoftwareFile.FileName);
 
             foreach (var child in treeViewItemViewModel.Children)
             {
-                child.File.Path = childPath;
+                child.FromSoftwareFile.Path = childPath;
                 RefreshPath(child);
             }
         }
@@ -112,11 +112,11 @@ namespace FromSoftwareGameSaves.ViewModel
             if (parentItem == null)
                 return;
 
-            var messageBoxResult = MessageBoxHelper.ShowMessage($"Do you want to delete {File.FileName} ?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var messageBoxResult = MessageBoxHelper.ShowMessage($"Do you want to delete {FromSoftwareFile.FileName} ?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (messageBoxResult == MessageBoxResult.No)
                 return;
 
-            var pathToDelete = Path.Combine(FromSoftwareFileInfo.AppDataPath, File.Path, File.FileName);
+            var pathToDelete = Path.Combine(FromSoftwareFile.RootDirectory, FromSoftwareFile.Path, FromSoftwareFile.FileName);
 
             try
             {
@@ -133,8 +133,8 @@ namespace FromSoftwareGameSaves.ViewModel
 
         public FileViewModel AcceptCopy(ITreeViewItemViewModel treeViewItemViewModel)
         {
-            var pathSource = Path.Combine(treeViewItemViewModel.File.Path, treeViewItemViewModel.File.FileName);
-            var pathDest = Path.Combine(File.Path, File.FileName, treeViewItemViewModel.File.FileName);
+            var pathSource = Path.Combine(treeViewItemViewModel.FromSoftwareFile.Path, treeViewItemViewModel.FromSoftwareFile.FileName);
+            var pathDest = Path.Combine(FromSoftwareFile.Path, FromSoftwareFile.FileName, treeViewItemViewModel.FromSoftwareFile.FileName);
 
             var messageBoxResult = MessageBoxHelper.ShowMessage($"Do you want to copy {pathSource} to {pathDest} ?", "Copy", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (messageBoxResult == MessageBoxResult.No)
@@ -142,13 +142,13 @@ namespace FromSoftwareGameSaves.ViewModel
 
             try
             {
-                if (!FileSystem.Copy(Path.Combine(FromSoftwareFileInfo.AppDataPath, pathSource), Path.Combine(FromSoftwareFileInfo.AppDataPath, pathDest), FromSoftwareFileInfo.FileSearchpattern, treeViewItemViewModel.IsDirectory ?? true))
+                if (!FileSystem.Copy(Path.Combine(treeViewItemViewModel.FromSoftwareFile.RootDirectory, pathSource), Path.Combine(FromSoftwareFile.RootDirectory, pathDest), FromSoftwareFile.FileSearchPattern, treeViewItemViewModel.IsDirectory ?? true))
                     return null;
 
                 IsSelected = true;
                 Refresh();
 
-                var newItem = Children.OfType<FileViewModel>().FirstOrDefault(child => child.File.FileName.Equals(treeViewItemViewModel.File.FileName));
+                var newItem = Children.OfType<FileViewModel>().FirstOrDefault(child => child.FromSoftwareFile.FileName.Equals(treeViewItemViewModel.FromSoftwareFile.FileName));
                 return newItem;
             }
             catch (Exception exception)
@@ -160,7 +160,7 @@ namespace FromSoftwareGameSaves.ViewModel
 
         public void ExpandAll()
         {
-            if (!File.IsDirectory)
+            if (!FromSoftwareFile.IsDirectory)
                 return;
 
             if (Children == null)

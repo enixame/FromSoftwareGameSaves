@@ -56,10 +56,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FileSystemManager\FileSystemManager.csproj">
-      <Project>{45d592e6-e8ef-4f56-a6d6-b62060a25df1}</Project>
-      <Name>FileSystemManager</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FromSoftwareGameSaves\FromSoftwareGameSaves.csproj">
       <Project>{1bc790e3-7ea3-4c07-838e-dce9c6dc3f2e}</Project>
       <Name>FromSoftwareGameSaves</Name>

@@ -65,6 +65,7 @@
     <Compile Include="Behaviors\TextBoxBehavior.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
     <Compile Include="Model\File.cs" />
+    <Compile Include="Model\GameFile.cs" />
     <Compile Include="Repository\FileRepository.cs" />
     <Compile Include="Utils\ImageHelper.cs" />
     <Compile Include="Utils\MessageBoxHelper.cs" />
@@ -148,10 +149,6 @@
     <Resource Include="Images\synchro.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FileSystemManager\FileSystemManager.csproj">
-      <Project>{45d592e6-e8ef-4f56-a6d6-b62060a25df1}</Project>
-      <Name>FileSystemManager</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FromSoftwareModel\FromSoftwareModel.csproj">
       <Project>{eed738bc-d73d-4c71-888e-09f07fda0be3}</Project>
       <Name>FromSoftwareModel</Name>

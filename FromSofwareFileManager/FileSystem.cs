@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace FileSystemManager
+namespace FromSoftwareFileManager
 {
     public static class FileSystem
     {
@@ -45,13 +45,13 @@ namespace FileSystemManager
 
         private static void DirectoryCopy(string sourcePath, string destPath, string fileExtension)
         {
-            // create subdirectories
-            var subdirectories = Directory.GetDirectories(sourcePath, "*.*", SearchOption.AllDirectories);
+            // create subDirectories
+            var subDirectories = Directory.GetDirectories(sourcePath, "*.*", SearchOption.AllDirectories);
 
-            if (subdirectories.Any())
+            if (subDirectories.Any())
             {
-                foreach (var subdirectory in subdirectories)
-                    Directory.CreateDirectory(subdirectory.Replace(sourcePath, destPath));
+                foreach (var subDirectory in subDirectories)
+                    Directory.CreateDirectory(subDirectory.Replace(sourcePath, destPath));
             }
             else
             {
@@ -61,14 +61,14 @@ namespace FileSystemManager
             
             // create files
             foreach (var file in Directory.GetFiles(sourcePath, fileExtension, SearchOption.AllDirectories))
-                File.Copy(file, file.Replace(sourcePath, destPath), true);
+                CopyFile(file, file.Replace(sourcePath, destPath));
         }
 
         private static bool CopyFile(string sourcePath, string destPath)
         {
             if (File.Exists(destPath))
                 throw new InvalidOperationException($"File '{Path.GetFileName(destPath)}' already exists.");
-            File.Copy(sourcePath, destPath);
+            File.Copy(sourcePath, destPath, true);
             return true;
         }
 

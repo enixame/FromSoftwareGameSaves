@@ -2,11 +2,11 @@
 using System.IO;
 using System.Linq;
 using System.Windows;
-using FileSystemManager;
+using FromSoftwareFileManager;
+using FromSoftwareGameSaves.Model;
 using FromSoftwareGameSaves.Repository;
 using FromSoftwareGameSaves.Utils;
 using FromSoftwareModel;
-using File = FromSoftwareGameSaves.Model.File;
 
 namespace FromSoftwareGameSaves.ViewModel
 {
@@ -122,9 +122,9 @@ namespace FromSoftwareGameSaves.ViewModel
 
         public virtual bool? IsDirectory { get; } = null;
 
-        public File File { get; protected set; }
+        public FromSoftwareFile FromSoftwareFile { get; protected set; }
 
-        public string RootPath => string.IsNullOrEmpty(File?.Path) ? string.Empty : File.Path.Split(Path.DirectorySeparatorChar).First();
+        public string RootPath => string.IsNullOrEmpty(FromSoftwareFile?.Path) ? string.Empty : FromSoftwareFile.Path.Split(Path.DirectorySeparatorChar).First();
 
         #region IsInEditMode
 
@@ -149,10 +149,10 @@ namespace FromSoftwareGameSaves.ViewModel
         /// </summary>
         protected void LoadChildren()
         {
-            if (!File.IsDirectory)
+            if (!FromSoftwareFile.IsDirectory)
                 return;
 
-            foreach (var child in FileRepository.LoadChildren(File))
+            foreach (var child in FileRepository.LoadChildren(FromSoftwareFile))
                 Children.Add(new FileViewModel(Root, child, this));
         }
 
@@ -192,14 +192,14 @@ namespace FromSoftwareGameSaves.ViewModel
         public virtual void New()
         {
             const string newDirectory = "New Directory";
-            var filePath = Path.Combine(File.Path, File.FileName);
+            var filePath = Path.Combine(FromSoftwareFile.Path, FromSoftwareFile.FileName);
 
             try
             {
-                var isDirectoryCreated = FileSystem.CreateDirectory(Path.Combine(FromSoftwareFileInfo.AppDataPath, filePath, newDirectory));
+                var isDirectoryCreated = FileSystem.CreateDirectory(Path.Combine(FromSoftwareFile.RootDirectory, filePath, newDirectory));
                 if (!isDirectoryCreated) return;
 
-                CreateNewFileAndExpandIt(newDirectory, filePath, true);
+                CreateNewFileAndExpandIt(FromSoftwareFile, newDirectory, filePath, true);
             }
             catch (Exception exception)
             {
@@ -207,13 +207,13 @@ namespace FromSoftwareGameSaves.ViewModel
             }
         }
 
-        private void CreateNewFileAndExpandIt(string fileName, string filePath, bool isInEditMode)
+        private void CreateNewFileAndExpandIt(GameFile gameFile, string fileName, string filePath, bool isInEditMode)
         {
             var isDirectoryLoaded = !HasDummyChild;
 
             if (isDirectoryLoaded)
             {
-                var file = new File(fileName, true, filePath);
+                var file = new FromSoftwareFile(gameFile.RootDirectory, gameFile.FileSearchPattern,  fileName, true, filePath);
                 var treeViewItemViewModel = new FileViewModel(Root, file, this) {IsSelected = true, IsInEditMode = isInEditMode };
                 Children.Add(treeViewItemViewModel);
             }
@@ -222,7 +222,7 @@ namespace FromSoftwareGameSaves.ViewModel
 
             if (isDirectoryLoaded) return;
 
-            var newItem = Children.FirstOrDefault(child => child.File.FileName.Equals(fileName));
+            var newItem = Children.FirstOrDefault(child => child.FromSoftwareFile.FileName.Equals(fileName));
             if (newItem == null) return;
 
             newItem.IsSelected = true;

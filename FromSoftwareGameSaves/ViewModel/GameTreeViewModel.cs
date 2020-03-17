@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using FromSoftwareGameSaves.Commands;
+using FromSoftwareGameSaves.Model;
 using FromSoftwareGameSaves.Utils;
 using FromSoftwareModel;
-using File = FromSoftwareGameSaves.Model.File;
 
 namespace FromSoftwareGameSaves.ViewModel
 {
@@ -19,7 +19,7 @@ namespace FromSoftwareGameSaves.ViewModel
 
         private readonly DragDropFileViewModel _dragDropFileViewModel = new DragDropFileViewModel();
 
-        public GameTreeViewModel(IEnumerable<File> roots)
+        public GameTreeViewModel(IEnumerable<FromSoftwareFile> roots)
         {
             GameRootsDirectory = new ReadOnlyCollection<RootDirectoryViewModel>(
                 (from file in roots
@@ -73,7 +73,7 @@ namespace FromSoftwareGameSaves.ViewModel
                 var selectedModel = SelectedItem;
                 if (selectedModel == null) return;
 
-                var path = Path.Combine(FromSoftwareFileInfo.AppDataPath, selectedModel.File.Path, selectedModel.File.FileName);
+                var path = Path.Combine(selectedModel.FromSoftwareFile.RootDirectory, selectedModel.FromSoftwareFile.Path, selectedModel.FromSoftwareFile.FileName);
 
                 try
                 {

@@ -4,5 +4,7 @@
     {
         string GameDirectory { get; }
         string DefaultFileName { get; }
+        string RootDirectory { get; }
+        string FileSearchPattern { get; }
     }
 }
