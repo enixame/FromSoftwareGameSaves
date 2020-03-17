@@ -9,42 +9,47 @@ namespace FromSoftwareGameSaves.Test
     [TestFixture]
     public class FromSoftwareGamePathTests
     {
+        private const string TestDirectory = "Test";
+        private string _rootDirectory;
+
+        [SetUp]
+        public void Setup()
+        {
+            string directoryName = Path.GetDirectoryName(new Uri(typeof(FromSoftwareGamePathTests).Assembly.CodeBase).LocalPath);
+            _rootDirectory = Path.Combine(directoryName ?? throw new InvalidOperationException(), TestDirectory);
+        }
+
         [TestCase("")]
         [TestCase(" ")]
         [TestCase("     ")]
         [TestCase(null)]
         public void FromSoftwareGamePathGetFilesTestsThrowsUnauthorized(string gamePath)
         {
-            Assert.Throws<UnauthorizedAccessException>(() => FromSoftwareFileSearch.GetDirectories(gamePath, FromSoftwareFileInfo.AppDataPath));   
+            Assert.Throws<UnauthorizedAccessException>(() => FromSoftwareFileSearch.GetSubDirectories(FromSoftwareFileInfo.AppDataPath, gamePath));   
         }
 
         [Test]
         public void FromSoftwareGamePathGetFilesTestsThrowsNotFound()
         {
-            Assert.Throws<DirectoryNotFoundException>(() => FromSoftwareFileSearch.GetFiles("toto", FromSoftwareFileInfo.FileSearchPattern, FromSoftwareFileInfo.AppDataPath));
+            Assert.Throws<DirectoryNotFoundException>(() => FromSoftwareFileSearch.GetGameFiles(_rootDirectory, "toto", FromSoftwareFileInfo.FileSearchPattern));
         }
 
-        [TestCase("DarkSoulsIII")]
-        [TestCase("Sekiro")]
-        public void FromSoftwareGamePathGetFilesTestsDoesNotThrowException(string gamePath)
+        [TestCase("Game1")]
+        [TestCase("Game2")]
+        public void FromSoftwareGamePathGetGameFileDoesNotThrowException(string gamePath)
         {
-            string[] files = FromSoftwareFileSearch.GetFiles(gamePath, FromSoftwareFileInfo.FileSearchPattern, FromSoftwareFileInfo.AppDataPath);
+            string[] files = FromSoftwareFileSearch.GetGameFiles(_rootDirectory, gamePath, FromSoftwareFileInfo.FileSearchPattern);
             Assert.IsNotNull(files);
             Assert.IsTrue(files.Length == 0);
         }
 
-        [TestCase("DarkSoulsIII")]
-        [TestCase("Sekiro")]
-        public void FromSoftwareGamePathGetDirectoriesTestsDoesNotThrowException(string gamePath)
+        [TestCase("Game1")]
+        [TestCase("Game2")]
+        public void FromSoftwareGamePathGetSubDirectoriesDoesNotThrowException(string gamePath)
         {
-            string[] files = FromSoftwareFileSearch.GetDirectories(gamePath, FromSoftwareFileInfo.AppDataPath);
+            string[] files = FromSoftwareFileSearch.GetSubDirectories(_rootDirectory, gamePath);
             Assert.IsNotNull(files);
             Assert.IsTrue(files.Length > 0);
-            Console.Out.WriteLine($"files length: {files.Length}");
-            foreach (string file in files)
-            {
-                Console.Out.WriteLine($"fromSoftwareFile: {file}");
-            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using FromSoftwareGameSaves.Model;
 
 namespace FromSoftwareGameSaves.ViewModel
@@ -26,6 +27,6 @@ namespace FromSoftwareGameSaves.ViewModel
         void Cancel();
         void Delete();
         void New();
-        void Refresh();
+        Task RefreshAsync();
     }
 }

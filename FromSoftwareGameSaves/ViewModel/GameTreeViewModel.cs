@@ -1,13 +1,14 @@
-﻿using System;
+﻿using FromSoftwareGameSaves.Commands;
+using FromSoftwareGameSaves.Repository;
+using FromSoftwareGameSaves.Utils;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
-using FromSoftwareGameSaves.Commands;
+using System.Windows.Threading;
 using FromSoftwareGameSaves.Model;
-using FromSoftwareGameSaves.Utils;
-using FromSoftwareModel;
 
 namespace FromSoftwareGameSaves.ViewModel
 {
@@ -18,13 +19,12 @@ namespace FromSoftwareGameSaves.ViewModel
         private ITreeViewItemViewModel _selectedItem;
 
         private readonly DragDropFileViewModel _dragDropFileViewModel = new DragDropFileViewModel();
+        private ObservableCollection<RootDirectoryViewModel> _gameRootsDirectory = new ObservableCollection<RootDirectoryViewModel>();
 
-        public GameTreeViewModel(IEnumerable<FromSoftwareFile> roots)
+        public GameTreeViewModel()
         {
-            GameRootsDirectory = new ReadOnlyCollection<RootDirectoryViewModel>(
-                (from file in roots
-                 select new RootDirectoryViewModel(this, file)).ToList());
-
+            LoadGameDirectoriesAsync();
+ 
             Edit = new DelegateCommand(arg =>
             {
                 var selectedModel = SelectedItem;
@@ -62,10 +62,10 @@ namespace FromSoftwareGameSaves.ViewModel
                 selectedModel?.Delete();
             });
 
-            Refresh = new DelegateCommand(arg =>
+            Refresh = new DelegateAsyncCommand(() =>
             {
                 var selectedModel = SelectedItem;
-                selectedModel?.Refresh();
+                return selectedModel?.RefreshAsync();
             });
 
             OpenInExplorer = new DelegateCommand(arg =>
@@ -91,13 +91,29 @@ namespace FromSoftwareGameSaves.ViewModel
                 item.IsSelected = true;
             });
 
-            DropCommand = new DelegateCommand<DragDropInfoViewModel<FileViewModel>>(arg =>
+            DropCommand = new DelegateAsyncCommand<DragDropInfoViewModel<FileViewModel>>(arg => _dragDropFileViewModel.DoDragDrop(arg));
+        }
+
+        private void LoadGameDirectoriesAsync()
+        {
+            Task.Run(async () =>
             {
-                _dragDropFileViewModel.DoDragDrop(arg);
+                IList<FromSoftwareFile> loadGameRootDirectories = await FileRepository.LoadGemDirectoriesAsync();
+                foreach (FromSoftwareFile fromSoftwareFile in loadGameRootDirectories)
+                    await UiDispatcher.BeginInvoke(DispatcherPriority.Normal,
+                        new Action(() => { _gameRootsDirectory.Add(new RootDirectoryViewModel(this, fromSoftwareFile)); }));
             });
         }
 
-        public ReadOnlyCollection<RootDirectoryViewModel> GameRootsDirectory { get; }
+        public ObservableCollection<RootDirectoryViewModel> GameRootsDirectory
+        {
+            get => _gameRootsDirectory;
+            set
+            {
+                _gameRootsDirectory = value;
+                OnPropertyChanged("GameRootsDirectory");
+            }
+        }
 
         public DelegateCommand Edit { get; }
 
@@ -109,11 +125,11 @@ namespace FromSoftwareGameSaves.ViewModel
 
         public DelegateCommand New { get; }
 
-        public DelegateCommand Refresh { get; }
+        public DelegateAsyncCommand Refresh { get; }
 
         public DelegateCommand OpenInExplorer { get; }
 
-        public DelegateCommand<DragDropInfoViewModel<FileViewModel>> DropCommand { get; }
+        public DelegateAsyncCommand<DragDropInfoViewModel<FileViewModel>> DropCommand { get; }
 
         public DelegateCommand<TreeViewItemViewModel> TreeViewItemRigthClick { get; }
 

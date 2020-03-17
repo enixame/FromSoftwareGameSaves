@@ -8,8 +8,8 @@ namespace FromSoftwareGameSaves.Commands
         private readonly Predicate<object> _canExecuteDelegate;
         private readonly Action<object> _executeDelegate;
 
-        public DelegateCommand(Action<object> execute)
-                       : this(execute, null)
+        public DelegateCommand(Action<object> execute) 
+            : this(execute, null)
         {
         }
 
@@ -26,8 +26,8 @@ namespace FromSoftwareGameSaves.Commands
 
         public event EventHandler CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
 
         public void Execute(object parameter)
@@ -61,8 +61,8 @@ namespace FromSoftwareGameSaves.Commands
 
         public event EventHandler CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
 
         public void Execute(object parameter)

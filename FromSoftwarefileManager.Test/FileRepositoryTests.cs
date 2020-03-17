@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Threading.Tasks;
 using FromSoftwareGameSaves.Model;
 using FromSoftwareGameSaves.Repository;
 using FromSoftwareModel;
@@ -9,31 +11,47 @@ namespace FromSoftwareGameSaves.Test
     [TestFixture]
     public class FileRepositoryTests
     {
-        
-        [Test]
-        public void LoadDarkSouls3Tree()
+        private const string TestDirectory = "Test";
+        private string _rootDirectory;
+
+        [SetUp]
+        public void Setup()
         {
-            var ds3 = new FromSoftwareFile(FromSoftwareFileInfo.AppDataPath, FromSoftwareFileInfo.FileSearchPattern, "DarkSoulsIII", true, string.Empty);
-            GetTree(ds3, 0);
+            string directoryName = Path.GetDirectoryName(new Uri(typeof(FileRepositoryTests).Assembly.CodeBase).LocalPath);
+            _rootDirectory = Path.Combine(directoryName ?? throw new InvalidOperationException(), TestDirectory);
         }
 
         [Test]
-        public void LoadDarkSekiroTree()
+        public async Task CheckGame1FilesAndDirCountTest()
         {
-            var sekiro = new FromSoftwareFile(FromSoftwareFileInfo.AppDataPath, FromSoftwareFileInfo.FileSearchPattern,"Sekiro", true, string.Empty);
-            GetTree(sekiro, 0);
+            var game1 = new FromSoftwareFile(_rootDirectory, FromSoftwareFileInfo.FileSearchPattern, "Game1", true, string.Empty);
+            var actualCount = await GetTree(game1, 0);
+            Assert.That(9, Is.EqualTo(actualCount));
         }
 
-        private void GetTree(FromSoftwareFile fromSoftwareFile, int level)
+        [Test]
+        public async Task CheckGame2FilesAndDirCountTest()
         {
-            var children = FileRepository.LoadChildren(fromSoftwareFile);
+            var game2 = new FromSoftwareFile(_rootDirectory, FromSoftwareFileInfo.FileSearchPattern,"Game2", true, string.Empty);
+            var actualCount = await GetTree(game2, 0);
+            Assert.That(7, Is.EqualTo(actualCount));
+        }
+
+        private static async Task<int> GetTree(FromSoftwareFile fromSoftwareFile, int level)
+        {
+            int childrenCount = 0;
+            var children = await FileRepository.LoadChildrenAsync(fromSoftwareFile);
             foreach (var child in children)
             {
                 for (int i = 0; i < level; i++)
                    Console.Write(@" ");
                 Console.Out.WriteLine($"{child.Path}\\{child.FileName}");
-                GetTree(child, level + 1);
+                childrenCount++;
+               int subChildrenCount = await GetTree(child, level + 1);
+               childrenCount += subChildrenCount;
             }
+
+            return childrenCount;
         }
     }
 }

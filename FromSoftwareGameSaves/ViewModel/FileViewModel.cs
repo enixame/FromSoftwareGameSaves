@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using FromSoftwareFileManager;
 using FromSoftwareGameSaves.Model;
 using FromSoftwareGameSaves.Utils;
-using FromSoftwareModel;
 
 namespace FromSoftwareGameSaves.ViewModel
 {
@@ -131,7 +132,7 @@ namespace FromSoftwareGameSaves.ViewModel
             }
         }
 
-        public FileViewModel AcceptCopy(ITreeViewItemViewModel treeViewItemViewModel)
+        public async Task<FileViewModel> AcceptCopyAsync(ITreeViewItemViewModel treeViewItemViewModel)
         {
             var pathSource = Path.Combine(treeViewItemViewModel.FromSoftwareFile.Path, treeViewItemViewModel.FromSoftwareFile.FileName);
             var pathDest = Path.Combine(FromSoftwareFile.Path, FromSoftwareFile.FileName, treeViewItemViewModel.FromSoftwareFile.FileName);
@@ -142,13 +143,27 @@ namespace FromSoftwareGameSaves.ViewModel
 
             try
             {
-                if (!FileSystem.Copy(Path.Combine(treeViewItemViewModel.FromSoftwareFile.RootDirectory, pathSource), Path.Combine(FromSoftwareFile.RootDirectory, pathDest), FromSoftwareFile.FileSearchPattern, treeViewItemViewModel.IsDirectory ?? true))
+                if (!FileSystem.Copy(Path.Combine(treeViewItemViewModel.FromSoftwareFile.RootDirectory, pathSource),
+                    Path.Combine(FromSoftwareFile.RootDirectory, pathDest), FromSoftwareFile.FileSearchPattern,
+                    treeViewItemViewModel.IsDirectory ?? true))
                     return null;
 
                 IsSelected = true;
-                Refresh();
 
                 var newItem = Children.OfType<FileViewModel>().FirstOrDefault(child => child.FromSoftwareFile.FileName.Equals(treeViewItemViewModel.FromSoftwareFile.FileName));
+
+                if (newItem == null)
+                {
+                    FromSoftwareFile fromSoftwareFile = new FromSoftwareFile(FromSoftwareFile.RootDirectory, FromSoftwareFile.FileSearchPattern, treeViewItemViewModel.FromSoftwareFile.FileName,
+                        treeViewItemViewModel.IsDirectory ?? true, Path.Combine(FromSoftwareFile.Path, FromSoftwareFile.FileName));
+
+                    newItem = new FileViewModel(treeViewItemViewModel.Root, fromSoftwareFile, this);
+                    await UiDispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                    {
+                        Children.Add(newItem);
+                    }));
+                }
+
                 return newItem;
             }
             catch (Exception exception)
@@ -158,7 +173,7 @@ namespace FromSoftwareGameSaves.ViewModel
             }
         }
 
-        public void ExpandAll()
+        public async Task ExpandAllAsync()
         {
             if (!FromSoftwareFile.IsDirectory)
                 return;
@@ -169,10 +184,14 @@ namespace FromSoftwareGameSaves.ViewModel
             if (!Children.Any())
                 return;
 
-            IsExpanded = true;
+            if (!HasDummyChild)
+                return;
+
+            await ExpandAsync();
+
             foreach (var child in Children.OfType<FileViewModel>())
             {
-                child.ExpandAll();
+                await child.ExpandAllAsync();
             }
         }
     }
