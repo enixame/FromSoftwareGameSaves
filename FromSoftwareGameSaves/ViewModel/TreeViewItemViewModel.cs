@@ -183,9 +183,10 @@ namespace FromSoftwareGameSaves.ViewModel
 
         #region actions
 
-        public virtual void Commit()
+        public virtual Task Commit()
         {
             // need to be implemented
+            return Task.CompletedTask;
         }
 
         public virtual void Cancel()

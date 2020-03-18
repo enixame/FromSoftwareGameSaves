@@ -32,13 +32,14 @@ namespace FromSoftwareGameSaves.ViewModel
                     selectedModel.IsInEditMode = true;
             });
 
-            Commit = new DelegateCommand(arg =>
+            Commit = new DelegateAsyncCommand(() =>
             {
                 var selectedModel = SelectedItem;
-                if (selectedModel == null || !selectedModel.IsInEditMode) return;
+                if (selectedModel == null || !selectedModel.IsInEditMode) 
+                    return Task.CompletedTask;
 
                 selectedModel.IsInEditMode = false;
-                selectedModel.Commit();
+                return selectedModel.Commit();
             });
 
             Cancel = new DelegateCommand(arg =>
@@ -68,21 +69,24 @@ namespace FromSoftwareGameSaves.ViewModel
                 return selectedModel?.RefreshAsync();
             });
 
-            OpenInExplorer = new DelegateCommand(arg =>
+            OpenInExplorer = new DelegateAsyncCommand(() =>
             {
                 var selectedModel = SelectedItem;
-                if (selectedModel == null) return;
+                if (selectedModel == null) return Task.CompletedTask;
 
                 var path = Path.Combine(selectedModel.FromSoftwareFile.RootDirectory, selectedModel.FromSoftwareFile.Path, selectedModel.FromSoftwareFile.FileName);
 
-                try
+                return Task.Run(() =>
                 {
-                    System.Diagnostics.Process.Start(ExplorerProcessName, path);
-                }
-                catch (Exception exception)
-                {
-                     MessageBoxHelper.ShowMessage(exception.Message, "Cannot open folder", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                    try
+                    {
+                        System.Diagnostics.Process.Start(ExplorerProcessName, path);
+                    }
+                    catch (Exception exception)
+                    {
+                        MessageBoxHelper.ShowMessage(exception.Message, "Cannot open folder", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                });
             });
 
             TreeViewItemRigthClick = new DelegateCommand<TreeViewItemViewModel>(item =>
@@ -119,7 +123,7 @@ namespace FromSoftwareGameSaves.ViewModel
 
         public DelegateCommand Delete { get; }
 
-        public DelegateCommand Commit { get; }
+        public DelegateAsyncCommand Commit { get; }
 
         public DelegateCommand Cancel { get; }
 
@@ -127,7 +131,7 @@ namespace FromSoftwareGameSaves.ViewModel
 
         public DelegateAsyncCommand Refresh { get; }
 
-        public DelegateCommand OpenInExplorer { get; }
+        public DelegateAsyncCommand OpenInExplorer { get; }
 
         public DelegateAsyncCommand<DragDropInfoViewModel<FileViewModel>> DropCommand { get; }
 
