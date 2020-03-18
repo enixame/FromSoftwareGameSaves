@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FromSoftwareFileManager
 {
@@ -22,9 +23,9 @@ namespace FromSoftwareFileManager
 
         #endregion
 
-        #region Copy
+        #region CopyAsync
 
-        public static bool Copy(string sourcePath, string destPath, string fileExtension, bool isDirectory)
+        public static async Task<bool> CopyAsync(string sourcePath, string destPath, string fileExtension, bool isDirectory)
         {
             if (string.IsNullOrEmpty(sourcePath) || string.IsNullOrEmpty(destPath))
                 return false;
@@ -32,18 +33,20 @@ namespace FromSoftwareFileManager
             if (sourcePath.Equals(destPath))
                 return false;
 
-            return !isDirectory ? CopyFile(sourcePath, destPath) : CopyDirectory(sourcePath, destPath, fileExtension);
+            return !isDirectory
+                ? await CopyFileAsync(sourcePath, destPath) 
+                : await CopyDirectoryAsync(sourcePath, destPath, fileExtension);
         }
 
-        private static bool CopyDirectory(string sourcePath, string destPath, string fileExtension)
+        private static async Task<bool> CopyDirectoryAsync(string sourcePath, string destPath, string fileExtension)
         {
             if (Directory.Exists(destPath))
                 throw new InvalidOperationException($"Directory '{Path.GetFileName(destPath)}' already exists.");
-            DirectoryCopy(sourcePath, destPath, fileExtension);
+            await DirectoryCopyAsync(sourcePath, destPath, fileExtension);
             return true;
         }
 
-        private static void DirectoryCopy(string sourcePath, string destPath, string fileExtension)
+        private static async Task DirectoryCopyAsync(string sourcePath, string destPath, string fileExtension)
         {
             // create subDirectories
             var subDirectories = Directory.GetDirectories(sourcePath, "*.*", SearchOption.AllDirectories);
@@ -61,14 +64,16 @@ namespace FromSoftwareFileManager
             
             // create files
             foreach (var file in Directory.GetFiles(sourcePath, fileExtension, SearchOption.AllDirectories))
-                CopyFile(file, file.Replace(sourcePath, destPath));
+                await CopyFileAsync(file, file.Replace(sourcePath, destPath));
         }
 
-        private static bool CopyFile(string sourcePath, string destPath)
+        private static async Task<bool> CopyFileAsync(string sourcePath, string destPath)
         {
             if (File.Exists(destPath))
                 throw new InvalidOperationException($"File '{Path.GetFileName(destPath)}' already exists.");
-            File.Copy(sourcePath, destPath, true);
+
+            await CopyOrMoveFileAsync(sourcePath, destPath, false);
+
             return true;
         }
 
@@ -108,12 +113,29 @@ namespace FromSoftwareFileManager
             return true;
         }
 
+        #endregion
+
+        #region async copy/move
+
+        private static async Task CopyOrMoveFileAsync(string sourcePath, string destinationPath, bool move)
+        {
+            using (Stream source = File.Open(sourcePath, FileMode.Open))
+            {
+                using (Stream destination = File.Create(destinationPath))
+                {
+                    await source.CopyToAsync(destination);
+                }
+            }
+
+            if (move)
+                File.Delete(sourcePath);
+        }
 
         #endregion
 
-        #region Rename
+        #region RenameAsync
 
-        public static bool Rename(string oldPath, string newPath)
+        public static async Task<bool> RenameAsync(string oldPath, string newPath)
         {
             if (string.IsNullOrEmpty(oldPath) || string.IsNullOrEmpty(newPath))
                 return false;
@@ -127,15 +149,16 @@ namespace FromSoftwareFileManager
             if(!fileExists && !directoryExists)
                 throw new InvalidOperationException($"File or Directory '{Path.GetFileName(newPath)}' does not exist.");
 
-            return fileExists ? RenameFile(oldPath, newPath) : RenameDirectory(oldPath, newPath);
+            return fileExists ? await RenameFileAsync(oldPath, newPath) : RenameDirectory(oldPath, newPath);
         }
 
-        private static bool RenameFile(string oldPath, string newPath)
+        private static async Task<bool> RenameFileAsync(string oldPath, string newPath)
         {
             if (File.Exists(newPath))
                 throw new InvalidOperationException($"File '{Path.GetFileName(newPath)}' already exists.");
 
-            File.Move(oldPath, newPath);
+            await CopyOrMoveFileAsync(oldPath, newPath, true);
+          
             return true;
         }
 

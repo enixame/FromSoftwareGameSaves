@@ -48,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileRepositoryTests.cs" />
-    <Compile Include="FileSystemTests.cs" />
     <Compile Include="FromSoftwareGamePathTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

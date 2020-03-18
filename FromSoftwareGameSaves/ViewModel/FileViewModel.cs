@@ -46,7 +46,7 @@ namespace FromSoftwareGameSaves.ViewModel
             OnPropertyChanged("FileName");
         }
 
-        public override void Commit()
+        public override async Task Commit()
         {
             var pathSource = Path.Combine(FromSoftwareFile.Path, FromSoftwareFile.FileName);
             var pathDest = Path.Combine(FromSoftwareFile.Path, _fileName);
@@ -56,7 +56,7 @@ namespace FromSoftwareGameSaves.ViewModel
                 var oldPath = Path.Combine(FromSoftwareFile.RootDirectory, pathSource);
                 var newPath = Path.Combine(FromSoftwareFile.RootDirectory, pathDest);
 
-                var isDirectoryChanged = FileSystem.Rename(oldPath, newPath);
+                var isDirectoryChanged = await FileSystem.RenameAsync(oldPath, newPath);
                 if (!isDirectoryChanged)
                 {
                     Cancel();
@@ -137,13 +137,13 @@ namespace FromSoftwareGameSaves.ViewModel
             var pathSource = Path.Combine(treeViewItemViewModel.FromSoftwareFile.Path, treeViewItemViewModel.FromSoftwareFile.FileName);
             var pathDest = Path.Combine(FromSoftwareFile.Path, FromSoftwareFile.FileName, treeViewItemViewModel.FromSoftwareFile.FileName);
 
-            var messageBoxResult = MessageBoxHelper.ShowMessage($"Do you want to copy {pathSource} to {pathDest} ?", "Copy", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var messageBoxResult = MessageBoxHelper.ShowMessage($"Do you want to copy {pathSource} to {pathDest} ?", "CopyAsync", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (messageBoxResult == MessageBoxResult.No)
                 return null;
 
             try
             {
-                if (!FileSystem.Copy(Path.Combine(treeViewItemViewModel.FromSoftwareFile.RootDirectory, pathSource),
+                if (!await FileSystem.CopyAsync(Path.Combine(treeViewItemViewModel.FromSoftwareFile.RootDirectory, pathSource),
                     Path.Combine(FromSoftwareFile.RootDirectory, pathDest), FromSoftwareFile.FileSearchPattern,
                     treeViewItemViewModel.IsDirectory ?? true))
                     return null;
