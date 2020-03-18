@@ -19,7 +19,7 @@ namespace FromSoftwareGameSaves.ViewModel
 
             if (dragDropInfoViewModel.TargetItem.IsDirectory == true)
             {
-                var newFileViewModel = await dragDropInfoViewModel.TargetItem.AcceptCopyAsync(dragDropInfoViewModel.SourceItem);
+                var newFileViewModel = await dragDropInfoViewModel.TargetItem.AcceptCopyFromTreeViewItemAsync(dragDropInfoViewModel.SourceItem);
                 if(newFileViewModel!= null)
                     await newFileViewModel.ExpandAllAsync();
             }
@@ -27,7 +27,7 @@ namespace FromSoftwareGameSaves.ViewModel
             {
                 if (dragDropInfoViewModel.TargetItem.Parent is FileViewModel treeViewItemViewModel && treeViewItemViewModel.IsDirectory == true)
                 {
-                    var newFileViewModel = await treeViewItemViewModel.AcceptCopyAsync(dragDropInfoViewModel.SourceItem);
+                    var newFileViewModel = await treeViewItemViewModel.AcceptCopyFromTreeViewItemAsync(dragDropInfoViewModel.SourceItem);
                     if (newFileViewModel != null)
                         await newFileViewModel.ExpandAllAsync();
                 }

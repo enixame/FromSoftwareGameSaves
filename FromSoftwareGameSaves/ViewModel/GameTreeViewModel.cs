@@ -39,7 +39,7 @@ namespace FromSoftwareGameSaves.ViewModel
                     return Task.CompletedTask;
 
                 selectedModel.IsInEditMode = false;
-                return selectedModel.Commit();
+                return selectedModel.CommitAsync();
             });
 
             Cancel = new DelegateCommand(arg =>
@@ -80,7 +80,7 @@ namespace FromSoftwareGameSaves.ViewModel
                 {
                     try
                     {
-                        System.Diagnostics.Process.Start(ExplorerProcessName, path);
+                        System.Diagnostics.Process.Start(ExplorerProcessName, $"\"{path}\"");
                     }
                     catch (Exception exception)
                     {

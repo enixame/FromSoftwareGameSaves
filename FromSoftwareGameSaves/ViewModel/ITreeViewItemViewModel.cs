@@ -23,7 +23,7 @@ namespace FromSoftwareGameSaves.ViewModel
         bool CanBeEdited { get; }
         bool? IsDirectory { get; }
 
-        Task Commit();
+        Task CommitAsync();
         void Cancel();
         void Delete();
         void New();

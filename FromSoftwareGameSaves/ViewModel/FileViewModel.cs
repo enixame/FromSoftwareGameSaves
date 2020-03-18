@@ -40,13 +40,20 @@ namespace FromSoftwareGameSaves.ViewModel
 
         public override bool? IsDirectory => FromSoftwareFile.IsDirectory;
 
+        /// <summary>
+        /// Cancel changes.
+        /// </summary>
         public override void Cancel()
         {
             _fileName = _backupFileName;
             OnPropertyChanged("FileName");
         }
 
-        public override async Task Commit()
+        /// <summary>
+        /// Commit changes and refresh all children path.
+        /// </summary>
+        /// <returns></returns>
+        public override async Task CommitAsync()
         {
             var pathSource = Path.Combine(FromSoftwareFile.Path, FromSoftwareFile.FileName);
             var pathDest = Path.Combine(FromSoftwareFile.Path, _fileName);
@@ -66,7 +73,7 @@ namespace FromSoftwareGameSaves.ViewModel
                 FromSoftwareFile = new FromSoftwareFile(FromSoftwareFile.RootDirectory, FromSoftwareFile.FileSearchPattern, _fileName, FromSoftwareFile.IsDirectory, FromSoftwareFile.Path);
                 _backupFileName = _fileName;
 
-                RefreshPath(this);
+                RefreshChildrenPath(this);
             }
             catch (Exception exception)
             {
@@ -76,7 +83,11 @@ namespace FromSoftwareGameSaves.ViewModel
 
         }
 
-        private static void RefreshPath(ITreeViewItemViewModel treeViewItemViewModel)
+        /// <summary>
+        /// Refresh the path of all children items.
+        /// </summary>
+        /// <param name="treeViewItemViewModel"></param>
+        private static void RefreshChildrenPath(ITreeViewItemViewModel treeViewItemViewModel)
         {
             if (!treeViewItemViewModel.FromSoftwareFile.IsDirectory)
                 return;
@@ -95,10 +106,13 @@ namespace FromSoftwareGameSaves.ViewModel
             foreach (var child in treeViewItemViewModel.Children)
             {
                 child.FromSoftwareFile.Path = childPath;
-                RefreshPath(child);
+                RefreshChildrenPath(child);
             }
         }
 
+        /// <summary>
+        /// New directory
+        /// </summary>
         public override void New()
         {
             if (IsDirectory != true)
@@ -107,6 +121,9 @@ namespace FromSoftwareGameSaves.ViewModel
             base.New(); 
         }
 
+        /// <summary>
+        /// Delete file or directory
+        /// </summary>
         public override void Delete()
         {
             var parentItem = Parent;
@@ -126,13 +143,22 @@ namespace FromSoftwareGameSaves.ViewModel
                 parentItem.IsSelected = true;
                 parentItem.Children.Remove(this);
             }
+            catch (InvalidOperationException invalidOperationException)
+            {
+                MessageBoxHelper.ShowMessage(invalidOperationException.Message, "Cannot delete file or directory", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             catch (Exception exception)
             {
-                MessageBoxHelper.ShowMessage(exception.Message, "Cannot copy", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxHelper.ShowMessage(exception.Message, "Failed to delete file or directory", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        public async Task<FileViewModel> AcceptCopyAsync(ITreeViewItemViewModel treeViewItemViewModel)
+        /// <summary>
+        /// Accept copy from another treeViewItem
+        /// </summary>
+        /// <param name="treeViewItemViewModel">another treeViewItem</param>
+        /// <returns></returns>
+        public async Task<FileViewModel> AcceptCopyFromTreeViewItemAsync(ITreeViewItemViewModel treeViewItemViewModel)
         {
             var pathSource = Path.Combine(treeViewItemViewModel.FromSoftwareFile.Path, treeViewItemViewModel.FromSoftwareFile.FileName);
             var pathDest = Path.Combine(FromSoftwareFile.Path, FromSoftwareFile.FileName, treeViewItemViewModel.FromSoftwareFile.FileName);
@@ -143,28 +169,35 @@ namespace FromSoftwareGameSaves.ViewModel
 
             try
             {
-                if (!await FileSystem.CopyAsync(Path.Combine(treeViewItemViewModel.FromSoftwareFile.RootDirectory, pathSource),
+                if (!await FileSystem.CopyAsync(
+                    Path.Combine(treeViewItemViewModel.FromSoftwareFile.RootDirectory, pathSource),
                     Path.Combine(FromSoftwareFile.RootDirectory, pathDest), FromSoftwareFile.FileSearchPattern,
                     treeViewItemViewModel.IsDirectory ?? true))
                     return null;
 
                 IsSelected = true;
 
-                var newItem = Children.OfType<FileViewModel>().FirstOrDefault(child => child.FromSoftwareFile.FileName.Equals(treeViewItemViewModel.FromSoftwareFile.FileName));
-
-                if (newItem == null)
-                {
-                    FromSoftwareFile fromSoftwareFile = new FromSoftwareFile(FromSoftwareFile.RootDirectory, FromSoftwareFile.FileSearchPattern, treeViewItemViewModel.FromSoftwareFile.FileName,
-                        treeViewItemViewModel.IsDirectory ?? true, Path.Combine(FromSoftwareFile.Path, FromSoftwareFile.FileName));
-
-                    newItem = new FileViewModel(treeViewItemViewModel.Root, fromSoftwareFile, this);
-                    await UiDispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
-                    {
-                        Children.Add(newItem);
-                    }));
-                }
+                FileViewModel newItem = Children.OfType<FileViewModel>().FirstOrDefault(child =>
+                    child.FromSoftwareFile.FileName.Equals(treeViewItemViewModel.FromSoftwareFile.FileName)) ?? await AddNewChildItemAsync(treeViewItemViewModel);
 
                 return newItem;
+            }
+            catch (PathTooLongException pathTooLongException)
+            {
+                MessageBoxHelper.ShowMessage(pathTooLongException.Message, "Path too long", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                // do rollback
+                IsSelected = true;
+                try
+                {
+                    FileSystem.Delete(Path.Combine(FromSoftwareFile.RootDirectory, pathDest));
+                }
+                catch (InvalidOperationException invalidOperationException)
+                {
+                    MessageBoxHelper.ShowMessage(invalidOperationException.Message, "Rollback failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                
+                return null;
             }
             catch (Exception exception)
             {
@@ -173,6 +206,28 @@ namespace FromSoftwareGameSaves.ViewModel
             }
         }
 
+        /// <summary>
+        /// Add new item to he children collections.
+        /// </summary>
+        /// <param name="treeViewItemViewModel">treeViewItemViewModel</param>
+        /// <returns></returns>
+        private async Task<FileViewModel> AddNewChildItemAsync(ITreeViewItemViewModel treeViewItemViewModel)
+        {
+            FromSoftwareFile fromSoftwareFile = new FromSoftwareFile(FromSoftwareFile.RootDirectory,
+                FromSoftwareFile.FileSearchPattern, treeViewItemViewModel.FromSoftwareFile.FileName,
+                treeViewItemViewModel.IsDirectory ?? true,
+                Path.Combine(FromSoftwareFile.Path, FromSoftwareFile.FileName));
+
+            FileViewModel newItem = new FileViewModel(treeViewItemViewModel.Root, fromSoftwareFile, this);
+            await UiDispatcher.BeginInvoke(DispatcherPriority.Normal,
+                new Action(() => { Children.Add(newItem); }));
+            return newItem;
+        }
+
+        /// <summary>
+        /// Expand all children items.
+        /// </summary>
+        /// <returns></returns>
         public async Task ExpandAllAsync()
         {
             if (!FromSoftwareFile.IsDirectory)
