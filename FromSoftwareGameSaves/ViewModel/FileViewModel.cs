@@ -137,7 +137,7 @@ namespace FromSoftwareGameSaves.ViewModel
             var pathSource = Path.Combine(treeViewItemViewModel.FromSoftwareFile.Path, treeViewItemViewModel.FromSoftwareFile.FileName);
             var pathDest = Path.Combine(FromSoftwareFile.Path, FromSoftwareFile.FileName, treeViewItemViewModel.FromSoftwareFile.FileName);
 
-            var messageBoxResult = MessageBoxHelper.ShowMessage($"Do you want to copy {pathSource} to {pathDest} ?", "CopyAsync", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var messageBoxResult = MessageBoxHelper.ShowMessage($"Do you want to copy {pathSource} to {pathDest} ?", "Copy", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (messageBoxResult == MessageBoxResult.No)
                 return null;
 
