@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Configuration;
 using System.Data.SqlServerCe;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+using FromSoftwareStorage.EntityModel;
 using FromSoftwareStorage.Images;
 
 namespace FromSoftwareStorage
@@ -18,12 +22,16 @@ namespace FromSoftwareStorage
 
         private readonly string[] _sqlSeparator = { "\r\nGO\r\n", "\r\nGO", "\r\nGo\r\n", "\r\nGo", "\r\ngo\r\n", "\r\ngo", "\r\ngO\r\n", "\r\ngO" };
 
+        private readonly RsaCryptoService _rsaCryptoService;
+        private static readonly ConcurrentDictionary<string, Lazy<string>> ConnectionStringDictionary = new ConcurrentDictionary<string, Lazy<string>>();
+
         public DatabaseEngineProvider()
         {
             DatabaseFileName = Path.Combine(AppDataPath, DatabaseName);
             BackupDatabaseFileName = Path.Combine(AppDataPath, BackupDatabaseName);
             RsaPrivateKeyFileName = Path.Combine(AppDataPath, RsaPrivateKeyFile);
             RsaPublicKeyFileName = Path.Combine(AppDataPath, RsaPublicKeyFile);
+            _rsaCryptoService = new RsaCryptoService();
         }
 
         private string BackupDatabaseFileName { get; }
@@ -173,6 +181,42 @@ namespace FromSoftwareStorage
                 sqlCeConnectionStringBuilder.Password = password;
 
             return sqlCeConnectionStringBuilder.ConnectionString;
+        }
+
+        public DataEntities GetEntities(string connectionStringName)
+        {
+            var providerConnectionString = GetOrBuildProviderConnectionString(connectionStringName);
+            return new DataEntities(providerConnectionString);
+        }
+
+        public string GetOrBuildProviderConnectionString(string connectionStringName)
+        {
+            Lazy<string> connectionStringValue = ConnectionStringDictionary.GetOrAdd(connectionStringName,
+                key => new Lazy<string>(() => BuildProviderConnectionString(key), LazyThreadSafetyMode.ExecutionAndPublication));
+
+            return connectionStringValue.Value;
+        }
+
+        private string BuildProviderConnectionString(string connectionStringName)
+        {
+            ConnectionStringSettings connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
+            if (connectionStringSettings == null)
+                throw new InvalidOperationException($"Missing connectionString name: {connectionStringName}");
+
+            if (!DataBaseExists)
+                throw new InvalidOperationException($"Database does not exist");
+
+            string password = null;
+            if (HasPrivateKey && HasPublicKey)
+            {
+                password = _rsaCryptoService.DecryptData(RsaPrivateKeyFileName, File.ReadAllText(RsaPublicKeyFileName));
+            }
+
+            string databaseConnectionString = BuildConnectionString(DatabaseFileName, password);
+            string providerConnectionString =
+                string.Format(connectionStringSettings.ConnectionString, databaseConnectionString);
+
+            return providerConnectionString;
         }
 
         private static void CreateDatabaseWithName(string databaseName, string password = null)

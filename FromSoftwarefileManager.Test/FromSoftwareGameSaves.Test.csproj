@@ -57,6 +57,7 @@
     <Compile Include="RsaCryptoServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Test\Game1\otherfile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
