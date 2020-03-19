@@ -43,9 +43,6 @@ namespace FromSoftwareGameSaves.Test
             var children = await FileRepository.LoadChildrenAsync(fromSoftwareFile);
             foreach (var child in children)
             {
-                for (int i = 0; i < level; i++)
-                   Console.Write(@" ");
-                Console.Out.WriteLine($"{child.Path}\\{child.FileName}");
                 childrenCount++;
                int subChildrenCount = await GetTree(child, level + 1);
                childrenCount += subChildrenCount;

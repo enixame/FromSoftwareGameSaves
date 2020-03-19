@@ -1,2 +1,2 @@
-﻿INSERT INTO [Image] ([GameName], [ImageFile])
+INSERT INTO [Image] ([GameName], [ImageFile])
 VALUES (@GameName, @ImageFile);

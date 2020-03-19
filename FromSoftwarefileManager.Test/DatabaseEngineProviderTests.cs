@@ -8,6 +8,7 @@ namespace FromSoftwareGameSaves.Test
     [TestFixture]
     public class DatabaseEngineProviderTests
     {
+        private const string DefaultPassword = "123456789";
         private DatabaseEngineProvider _engine;
 
         [SetUp]
@@ -15,8 +16,18 @@ namespace FromSoftwareGameSaves.Test
         {
             _engine = new DatabaseEngineProvider();
 
-            if(_engine.DataBaseExists)
+            if (_engine.DataBaseExists)
                 File.Delete(_engine.DatabaseFileName);
+        }
+
+        [Test]
+        public void TearDown()
+        {
+            if (_engine.HasPrivateKey)
+                File.Delete(_engine.RsaPrivateKeyFileName);
+
+            if (_engine.HasPublicKey)
+                File.Delete(_engine.RsaPublicKeyFileName);
         }
 
         [Test]
@@ -29,7 +40,7 @@ namespace FromSoftwareGameSaves.Test
         [Test]
         public void CreateDataWithPasswordTest()
         {
-            _engine.CreateDatabase("123456789");
+            _engine.CreateDatabase(DefaultPassword);
             Assert.That(File.Exists(_engine.DatabaseFileName), Is.True);
             Assert.That(File.Exists(_engine.RsaPublicKeyFileName), Is.True);
             Assert.That(File.Exists(_engine.RsaPrivateKeyFileName), Is.True);

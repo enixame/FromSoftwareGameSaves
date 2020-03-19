@@ -1,4 +1,4 @@
-﻿-- Insert Folder data
+-- Insert Folder data
 
 INSERT INTO [Folder]
            ([Name]

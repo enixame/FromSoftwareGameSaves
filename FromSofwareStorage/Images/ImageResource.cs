@@ -9,12 +9,12 @@ namespace FromSoftwareStorage.Images
 
         public static async Task<byte[]> GetDarkSouls3ImageResourceAsync()
         {
-            return await ResourceStream.GetResourceBytesAsync(DarkSouls3ResourceName);
+            return await ResourceStream.GetBinaryResourceAsync(DarkSouls3ResourceName);
         }
 
         public static async Task<byte[]> GetSekiroImageResourceAsync()
         {
-            return await ResourceStream.GetResourceBytesAsync(SekiroResourceName);
+            return await ResourceStream.GetBinaryResourceAsync(SekiroResourceName);
         }
     }
 }

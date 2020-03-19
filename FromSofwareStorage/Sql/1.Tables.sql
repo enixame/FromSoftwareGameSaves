@@ -1,4 +1,4 @@
-﻿-- Folder
+-- Folder
 CREATE TABLE [Folder]
 (
     [Id] INT IDENTITY PRIMARY KEY,
@@ -28,8 +28,7 @@ GO
 -- Image
 CREATE TABLE [Image]
 (
-	[Id] INT IDENTITY PRIMARY KEY,
-	[GameName] NVARCHAR(30) NOT NULL,
+	[GameName] NVARCHAR(30) PRIMARY KEY,
 	[ImageFile] IMAGE NOT NULL
 )
 

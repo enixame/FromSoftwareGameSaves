@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data.SqlServerCe;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using FromSoftwareStorage.Images;
 
@@ -14,8 +13,9 @@ namespace FromSoftwareStorage
         private const string BackupDatabaseName = "Data_backup.sdf";
         private const string RsaPrivateKeyFile = "DataPrivateKey.key";
         private const string RsaPublicKeyFile = "DataPublicKey.key";
+        private const string DarkSouls3GameName = "DarkSouls 3";
+        private const string SekiroGameName = "Sekiro";
 
-        private readonly ASCIIEncoding _bytesConverter = new ASCIIEncoding();
         private readonly string[] _sqlSeparator = { "\r\nGO\r\n", "\r\nGO", "\r\nGo\r\n", "\r\nGo", "\r\ngo\r\n", "\r\ngo", "\r\ngO\r\n", "\r\ngO" };
 
         public DatabaseEngineProvider()
@@ -85,8 +85,7 @@ namespace FromSoftwareStorage
 
                 using (SqlCeTransaction sqlCeTransaction = sqlCeConnection.BeginTransaction())
                 {
-                    byte[] sqlBytes = await SqlEngineProvider.GetSqlDataBytesAsync();
-                    string sqlData = _bytesConverter.GetString(sqlBytes);
+                    string sqlData = await SqlEngineProvider.GetSqlDataAsync();
                     string[] sqlStatements = sqlData.Split(_sqlSeparator, StringSplitOptions.RemoveEmptyEntries);
 
                     foreach (var sqlStatement in sqlStatements)
@@ -106,7 +105,7 @@ namespace FromSoftwareStorage
             }
         }
 
-        private async Task<bool> InsertImagesAsync(string connectionString)
+        private static async Task<bool> InsertImagesAsync(string connectionString)
         {
             string sqlCommand = await SqlEngineProvider.GetImageInsertCommandAsync();
 
@@ -118,11 +117,11 @@ namespace FromSoftwareStorage
                 {
                     // dark souls3
                     byte[] darkSouls3Resource = await ImageResource.GetDarkSouls3ImageResourceAsync();
-                    ExecuteSqlCommandWithParameters("DarkSouls 3", darkSouls3Resource, sqlCeConnection, sqlCommand, sqlCeTransaction);
+                    ExecuteSqlCommandWithParameters(DarkSouls3GameName, darkSouls3Resource, sqlCeConnection, sqlCommand, sqlCeTransaction);
 
                     // Sekiro
                     byte[] sekiroResource = await ImageResource.GetSekiroImageResourceAsync();
-                    ExecuteSqlCommandWithParameters("Sekiro", sekiroResource, sqlCeConnection, sqlCommand, sqlCeTransaction);
+                    ExecuteSqlCommandWithParameters(SekiroGameName, sekiroResource, sqlCeConnection, sqlCommand, sqlCeTransaction);
                     
                     sqlCeTransaction.Commit();
 
