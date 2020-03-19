@@ -56,7 +56,7 @@ INSERT INTO [Folder]
            ,[ReadOnly])
      VALUES
            ('Custom'
-           ,NULL
+           ,'C:\'
            ,0);
 GO
 

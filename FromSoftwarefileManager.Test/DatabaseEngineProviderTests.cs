@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using System.Text;
+﻿using System.IO;
 using System.Threading.Tasks;
 using FromSoftwareStorage;
 using NUnit.Framework;
@@ -38,20 +35,12 @@ namespace FromSoftwareGameSaves.Test
             Assert.That(File.Exists(_engine.RsaPrivateKeyFileName), Is.True);
         }
 
-        //[Test]
-        //public async Task __()
-        //{
-        //    var sqlData = await SqlEngineProvider.GetSqlDataAsync();
-
-        //     ASCIIEncoding byteConverter = new ASCIIEncoding();
-        //     string s = byteConverter.GetString(sqlData);
-
-
-        //     string[] manifestResourceNames = typeof(DatabaseEngineProvider).Assembly.GetManifestResourceNames();
-        //    foreach (var manifestResourceName in manifestResourceNames)
-        //    {
-        //        Console.Out.WriteLine(manifestResourceName);
-        //    }
-        //}
+        [Test]
+        public async Task InstallDatabaseWithoutPasswordTest()
+        {
+           bool installSucceeded = await _engine.InstallDatabaseAsync();
+           Assert.That(installSucceeded, Is.True);
+           Assert.That(File.Exists(_engine.DatabaseFileName), Is.True);
+        }
     }
 }

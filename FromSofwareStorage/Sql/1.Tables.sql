@@ -25,9 +25,28 @@ CREATE TABLE [Game]
 
 GO
 
+-- Image
+CREATE TABLE [Image]
+(
+	[Id] INT IDENTITY PRIMARY KEY,
+	[GameName] NVARCHAR(30) NOT NULL,
+	[ImageFile] IMAGE NOT NULL
+)
+
+GO
+
+-- Game foreign key
 ALTER TABLE [Game]
     ADD CONSTRAINT FK_Game_Folder FOREIGN KEY ([FolderId]) 
 	REFERENCES [Folder] ([Id])
+	ON UPDATE CASCADE
+
+GO
+
+-- Image foreign key
+ALTER TABLE [Image]
+    ADD CONSTRAINT FK_Image_Game FOREIGN KEY ([GameName]) 
+	REFERENCES [Game] ([Name])
 	ON UPDATE CASCADE
 
 GO
