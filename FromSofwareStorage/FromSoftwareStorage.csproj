@@ -135,6 +135,7 @@
     <Compile Include="DatabaseEngineProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RsaCryptoService.cs" />
+    <Compile Include="SqlEngineProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
@@ -151,6 +152,11 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Sql\InsertData.sql" />
+    <EmbeddedResource Include="Sql\Tables.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

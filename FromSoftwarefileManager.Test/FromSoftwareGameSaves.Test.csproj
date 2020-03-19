@@ -10,10 +10,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FromSoftwareGameSaves.Test</RootNamespace>
     <AssemblyName>FromSoftwareGameSaves.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,9 +48,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseEngineProviderTests.cs" />
     <Compile Include="FileRepositoryTests.cs" />
     <Compile Include="FromSoftwareGamePathTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RsaCryptoServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -108,6 +111,10 @@
     <ProjectReference Include="..\FromSofwareFileManager\FromSoftwareFileManager.csproj">
       <Project>{91df4728-584e-4cdf-8c1c-e45f1d78a5a2}</Project>
       <Name>FromSoftwareFileManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FromSofwareStorage\FromSoftwareStorage.csproj">
+      <Project>{290af0ed-9f2d-4b07-9f1c-6d9bb9cdc453}</Project>
+      <Name>FromSoftwareStorage</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
