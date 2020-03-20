@@ -140,7 +140,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseEngineInstaller.cs" />
     <Compile Include="DatabaseEngineProvider.cs" />
+    <Compile Include="Database.cs" />
     <Compile Include="EntityModel\DataEntities.cs" />
     <Compile Include="EntityModel\DataModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -166,6 +168,7 @@
     <Compile Include="EntityModel\Image.cs">
       <DependentUpon>DataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="IDatabaseProvider.cs" />
     <Compile Include="Images\ImageResource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceStream.cs" />

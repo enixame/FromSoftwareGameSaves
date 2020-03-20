@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace FromSoftwareStorage
 {
-    public static class ResourceStream
+    internal static class ResourceStream
     {
         public static async Task<string> GetResourceStringAsync(string resourceName)
         {
