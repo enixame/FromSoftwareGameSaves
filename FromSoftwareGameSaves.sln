@@ -9,9 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FromSoftwareFileManager", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FromSoftwareGameSaves.Test", "FromSoftwarefileManager.Test\FromSoftwareGameSaves.Test.csproj", "{A1082AB7-913E-4067-8DC4-844C081EB4FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FromSoftwareModel", "FromSoftwareModel\FromSoftwareModel.csproj", "{EED738BC-D73D-4C71-888E-09F07FDA0BE3}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FromSoftwareStorage", "FromSofwareStorage\FromSoftwareStorage.csproj", "{290AF0ED-9F2D-4B07-9F1C-6D9BB9CDC453}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Install", "Install", "{F3C28CFD-8051-4FE0-A890-A3963A96E093}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{F2DF9BC6-EF1A-4AA5-B741-DFC51BAFACDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,17 +33,18 @@ Global
 		{A1082AB7-913E-4067-8DC4-844C081EB4FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1082AB7-913E-4067-8DC4-844C081EB4FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1082AB7-913E-4067-8DC4-844C081EB4FD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EED738BC-D73D-4C71-888E-09F07FDA0BE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EED738BC-D73D-4C71-888E-09F07FDA0BE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EED738BC-D73D-4C71-888E-09F07FDA0BE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EED738BC-D73D-4C71-888E-09F07FDA0BE3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{290AF0ED-9F2D-4B07-9F1C-6D9BB9CDC453}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{290AF0ED-9F2D-4B07-9F1C-6D9BB9CDC453}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{290AF0ED-9F2D-4B07-9F1C-6D9BB9CDC453}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{290AF0ED-9F2D-4B07-9F1C-6D9BB9CDC453}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2DF9BC6-EF1A-4AA5-B741-DFC51BAFACDA}.Debug|Any CPU.ActiveCfg = Debug
+		{F2DF9BC6-EF1A-4AA5-B741-DFC51BAFACDA}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F2DF9BC6-EF1A-4AA5-B741-DFC51BAFACDA} = {F3C28CFD-8051-4FE0-A890-A3963A96E093}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B0CB7692-E966-4D5F-A2F1-EF932D0E6AF5}

@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="FromSoftwareModel.EntityModel.Store" Provider="System.Data.SqlServerCe.4.0" ProviderManifestToken="4.0" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Folder">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="FolderPath" Type="nvarchar" MaxLength="256" />
+          <Property Name="ReadOnly" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Game">
+          <Key>
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="Name" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="Directory" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="DefaultFileName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="FileSearchPattern" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DefaultDirectory" Type="nvarchar" MaxLength="100" />
+          <Property Name="RootDirectory" Type="nvarchar" MaxLength="256" />
+          <Property Name="ChangeDate" Type="datetime" Nullable="false" />
+          <Property Name="ReadOnly" Type="bit" Nullable="false" />
+          <Property Name="FolderId" Type="int" />
+        </EntityType>
+        <EntityType Name="Image">
+          <Key>
+            <PropertyRef Name="GameName" />
+          </Key>
+          <Property Name="GameName" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="ImageFile" Type="image" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Game_Folder">
+          <End Role="Folder" Type="Self.Folder" Multiplicity="0..1" />
+          <End Role="Game" Type="Self.Game" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Folder">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Game">
+              <PropertyRef Name="FolderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Image_Game">
+          <End Role="Game" Type="Self.Game" Multiplicity="1" />
+          <End Role="Image" Type="Self.Image" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Game">
+              <PropertyRef Name="Name" />
+            </Principal>
+            <Dependent Role="Image">
+              <PropertyRef Name="GameName" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="FromSoftwareModelEntityModelStoreContainer">
+          <EntitySet Name="Folder" EntityType="Self.Folder" store:Type="Tables" />
+          <EntitySet Name="Game" EntityType="Self.Game" store:Type="Tables" />
+          <EntitySet Name="Image" EntityType="Self.Image" store:Type="Tables" />
+          <AssociationSet Name="FK_Game_Folder" Association="Self.FK_Game_Folder">
+            <End Role="Folder" EntitySet="Folder" />
+            <End Role="Game" EntitySet="Game" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Image_Game" Association="Self.FK_Image_Game">
+            <End Role="Game" EntitySet="Game" />
+            <End Role="Image" EntitySet="Image" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="FromSoftwareModel.EntityModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Folder">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FolderPath" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ReadOnly" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Games" Relationship="Self.FK_Game_Folder" FromRole="Folder" ToRole="Game" />
+        </EntityType>
+        <EntityType Name="Game">
+          <Key>
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="Name" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Directory" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DefaultFileName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FileSearchPattern" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DefaultDirectory" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="RootDirectory" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ChangeDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ReadOnly" Type="Boolean" Nullable="false" />
+          <Property Name="FolderId" Type="Int32" />
+          <NavigationProperty Name="Folder" Relationship="Self.FK_Game_Folder" FromRole="Game" ToRole="Folder" />
+          <NavigationProperty Name="Image" Relationship="Self.FK_Image_Game" FromRole="Game" ToRole="Image" />
+        </EntityType>
+        <EntityType Name="Image">
+          <Key>
+            <PropertyRef Name="GameName" />
+          </Key>
+          <Property Name="GameName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ImageFile" Type="Binary" MaxLength="Max" FixedLength="false" Nullable="false" />
+          <NavigationProperty Name="Game" Relationship="Self.FK_Image_Game" FromRole="Image" ToRole="Game" />
+        </EntityType>
+        <Association Name="FK_Game_Folder">
+          <End Role="Folder" Type="Self.Folder" Multiplicity="0..1" />
+          <End Role="Game" Type="Self.Game" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Folder">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Game">
+              <PropertyRef Name="FolderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Image_Game">
+          <End Role="Game" Type="Self.Game" Multiplicity="1" />
+          <End Role="Image" Type="Self.Image" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Game">
+              <PropertyRef Name="Name" />
+            </Principal>
+            <Dependent Role="Image">
+              <PropertyRef Name="GameName" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="DataEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Folders" EntityType="Self.Folder" />
+          <EntitySet Name="Games" EntityType="Self.Game" />
+          <EntitySet Name="Images" EntityType="Self.Image" />
+          <AssociationSet Name="FK_Game_Folder" Association="Self.FK_Game_Folder">
+            <End Role="Folder" EntitySet="Folders" />
+            <End Role="Game" EntitySet="Games" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Image_Game" Association="Self.FK_Image_Game">
+            <End Role="Game" EntitySet="Games" />
+            <End Role="Image" EntitySet="Images" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="FromSoftwareModelEntityModelStoreContainer" CdmEntityContainer="DataEntities">
+          <EntitySetMapping Name="Folders">
+            <EntityTypeMapping TypeName="FromSoftwareModel.EntityModel.Folder">
+              <MappingFragment StoreEntitySet="Folder">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="FolderPath" ColumnName="FolderPath" />
+                <ScalarProperty Name="ReadOnly" ColumnName="ReadOnly" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Games">
+            <EntityTypeMapping TypeName="FromSoftwareModel.EntityModel.Game">
+              <MappingFragment StoreEntitySet="Game">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Directory" ColumnName="Directory" />
+                <ScalarProperty Name="DefaultFileName" ColumnName="DefaultFileName" />
+                <ScalarProperty Name="FileSearchPattern" ColumnName="FileSearchPattern" />
+                <ScalarProperty Name="DefaultDirectory" ColumnName="DefaultDirectory" />
+                <ScalarProperty Name="RootDirectory" ColumnName="RootDirectory" />
+                <ScalarProperty Name="ChangeDate" ColumnName="ChangeDate" />
+                <ScalarProperty Name="ReadOnly" ColumnName="ReadOnly" />
+                <ScalarProperty Name="FolderId" ColumnName="FolderId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Images">
+            <EntityTypeMapping TypeName="FromSoftwareModel.EntityModel.Image">
+              <MappingFragment StoreEntitySet="Image">
+                <ScalarProperty Name="GameName" ColumnName="GameName" />
+                <ScalarProperty Name="ImageFile" ColumnName="ImageFile" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Aucun" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

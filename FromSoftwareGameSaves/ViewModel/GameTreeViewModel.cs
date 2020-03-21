@@ -102,7 +102,7 @@ namespace FromSoftwareGameSaves.ViewModel
         {
             Task.Run(async () =>
             {
-                IList<FromSoftwareFile> loadGameRootDirectories = await FileRepository.LoadGemDirectoriesAsync();
+                IList<FromSoftwareFile> loadGameRootDirectories = await FileRepository.LoadGameDirectoriesAsync();
                 foreach (FromSoftwareFile fromSoftwareFile in loadGameRootDirectories)
                     await UiDispatcher.BeginInvoke(DispatcherPriority.Normal,
                         new Action(() => { _gameRootsDirectory.Add(new RootDirectoryViewModel(this, fromSoftwareFile)); }));

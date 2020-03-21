@@ -34,12 +34,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=3.11.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -49,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseEngineInstallerTests.cs" />
     <Compile Include="DatabaseEngineProviderTests.cs" />
     <Compile Include="FileRepositoryTests.cs" />
     <Compile Include="FromSoftwareGamePathTests.cs" />
@@ -57,6 +63,7 @@
     <Compile Include="RsaCryptoServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Test\Game1\otherfile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -106,10 +113,6 @@
       <Project>{1bc790e3-7ea3-4c07-838e-dce9c6dc3f2e}</Project>
       <Name>FromSoftwareGameSaves</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FromSoftwareModel\FromSoftwareModel.csproj">
-      <Project>{eed738bc-d73d-4c71-888e-09f07fda0be3}</Project>
-      <Name>FromSoftwareModel</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FromSofwareFileManager\FromSoftwareFileManager.csproj">
       <Project>{91df4728-584e-4cdf-8c1c-e45f1d78a5a2}</Project>
       <Name>FromSoftwareFileManager</Name>
@@ -119,7 +122,9 @@
       <Name>FromSoftwareStorage</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Test\Test.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

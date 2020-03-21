@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FromSoftwareStorage
 {
-    public sealed class SqlEngineProvider
+    internal sealed class SqlEngineProvider
     {
         private const string SqlResourceName = "FromSoftwareStorage.Sql.";
         private const string SqlInsertImageResourceName = "FromSoftwareStorage.SqlCommands.InsertImage.sql";
@@ -31,7 +31,6 @@ namespace FromSoftwareStorage
                 return bytesConverter.GetString(memoryStream.ToArray());
             }
         }
-
 
         public static async Task<string> GetImageInsertCommandAsync()
         {

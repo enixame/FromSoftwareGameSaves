@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FromSoftwareFileManager</RootNamespace>
     <AssemblyName>FromSoftwareFileManager</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,9 +46,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FromSoftwareModel\FromSoftwareModel.csproj">
-      <Project>{eed738bc-d73d-4c71-888e-09f07fda0be3}</Project>
-      <Name>FromSoftwareModel</Name>
+    <ProjectReference Include="..\FromSofwareStorage\FromSoftwareStorage.csproj">
+      <Project>{290af0ed-9f2d-4b07-9f1c-6d9bb9cdc453}</Project>
+      <Name>FromSoftwareStorage</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
