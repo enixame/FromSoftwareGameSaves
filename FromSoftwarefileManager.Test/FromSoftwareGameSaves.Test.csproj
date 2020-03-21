@@ -113,10 +113,6 @@
       <Project>{1bc790e3-7ea3-4c07-838e-dce9c6dc3f2e}</Project>
       <Name>FromSoftwareGameSaves</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FromSoftwareModel\FromSoftwareModel.csproj">
-      <Project>{eed738bc-d73d-4c71-888e-09f07fda0be3}</Project>
-      <Name>FromSoftwareModel</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FromSofwareFileManager\FromSoftwareFileManager.csproj">
       <Project>{91df4728-584e-4cdf-8c1c-e45f1d78a5a2}</Project>
       <Name>FromSoftwareFileManager</Name>

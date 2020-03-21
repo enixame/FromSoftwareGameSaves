@@ -11,7 +11,7 @@ namespace FromSoftwareGameSaves.ViewModel
         {
             FromSoftwareFile = fromSoftwareFile;
             CanBeEdited = false;
-            ImagePath = ImageHelper.BuildImageSource(fromSoftwareFile.FileName, ImageHelper.ImageExtensionJpg);
+            ImagePath = ImageHelper.BuildImageSourceFromDatabase(fromSoftwareFile.GameName);
         }
 
         public string RootName => FromSoftwareFile.FileName;

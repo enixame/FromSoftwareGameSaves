@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using FromSoftwareFileManager;
-using FromSoftwareModel;
 using NUnit.Framework;
 
 namespace FromSoftwareGameSaves.Test
@@ -25,20 +24,20 @@ namespace FromSoftwareGameSaves.Test
         [TestCase(null)]
         public void FromSoftwareGamePathGetFilesTestsThrowsUnauthorized(string gamePath)
         {
-            Assert.Throws<UnauthorizedAccessException>(() => FromSoftwareFileSearch.GetSubDirectories(FromSoftwareFileInfo.AppDataPath, gamePath));   
+            Assert.Throws<UnauthorizedAccessException>(() => FromSoftwareFileSearch.GetSubDirectories(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), gamePath));   
         }
 
         [Test]
         public void FromSoftwareGamePathGetFilesTestsThrowsNotFound()
         {
-            Assert.Throws<DirectoryNotFoundException>(() => FromSoftwareFileSearch.GetGameFiles(_rootDirectory, "toto", FromSoftwareFileInfo.FileSearchPattern));
+            Assert.Throws<DirectoryNotFoundException>(() => FromSoftwareFileSearch.GetGameFiles(_rootDirectory, "toto", "*.*"));
         }
 
         [TestCase("Game1")]
         [TestCase("Game2")]
         public void FromSoftwareGamePathGetGameFileDoesNotThrowException(string gamePath)
         {
-            string[] files = FromSoftwareFileSearch.GetGameFiles(_rootDirectory, gamePath, FromSoftwareFileInfo.FileSearchPattern);
+            string[] files = FromSoftwareFileSearch.GetGameFiles(_rootDirectory, gamePath, "*.sl2");
             Assert.IsNotNull(files);
             Assert.IsTrue(files.Length == 0);
         }

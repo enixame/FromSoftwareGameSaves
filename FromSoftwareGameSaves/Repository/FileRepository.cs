@@ -4,7 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using FromSoftwareFileManager;
 using FromSoftwareGameSaves.Model;
-using FromSoftwareModel;
+using FromSoftwareGameSaves.Utils;
+using FromSoftwareStorage;
+using FromSoftwareStorage.EntityModel;
+using FromSoftwareStorage.Interface;
 
 namespace FromSoftwareGameSaves.Repository
 {
@@ -12,18 +15,22 @@ namespace FromSoftwareGameSaves.Repository
     {
         private static readonly List<FromSoftwareFile> Empty = new List<FromSoftwareFile>();
 
-        public static async Task<List<FromSoftwareFile>> LoadGemDirectoriesAsync()
+        public static async Task<List<FromSoftwareFile>> LoadGameDirectoriesAsync()
         {
-            var fromSoftwareGameDirectories = FromSoftwareSaveFileRepository.FromSoftwareGameDirectories;
-
             return await Task.Run(() =>
             {
-                return 
-                    fromSoftwareGameDirectories
-                        .Select(fromSoftwareSaveFile => new FromSoftwareFile(fromSoftwareSaveFile.RootDirectory, fromSoftwareSaveFile.FileSearchPattern, fromSoftwareSaveFile.GameDirectory, true, string.Empty))
+                return
+                    GetFromSoftwareGames()
+                        .Select(fromSoftwareSaveFile => new FromSoftwareFile(fromSoftwareSaveFile.GameRootDirectory, fromSoftwareSaveFile.FileSearchPattern, fromSoftwareSaveFile.Directory, true, string.Empty) { GameName = fromSoftwareSaveFile.Name })
                         .Where(file => Directory.Exists(Path.Combine(file.RootDirectory, file.FileName)))
                         .ToList();
             });
+        }
+
+        private static IEnumerable<ISaveGameFile> GetFromSoftwareGames()
+        {
+            using (DataEntities dataEntities = Database.DatabaseProvider.GetEntities(ConnectionStrings.DataEntities))
+                return dataEntities.Games.Include("Folder").ToList();
         }
 
         public static async Task<List<FromSoftwareFile>> LoadChildrenAsync(FromSoftwareFile fromSoftwareFile)
