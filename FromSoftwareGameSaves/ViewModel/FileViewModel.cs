@@ -213,6 +213,9 @@ namespace FromSoftwareGameSaves.ViewModel
         /// <returns></returns>
         private async Task<FileViewModel> AddNewChildItemAsync(ITreeViewItemViewModel treeViewItemViewModel)
         {
+            if (HasDummyChild)
+                return null;
+
             FromSoftwareFile fromSoftwareFile = new FromSoftwareFile(FromSoftwareFile.RootDirectory,
                 FromSoftwareFile.FileSearchPattern, treeViewItemViewModel.FromSoftwareFile.FileName,
                 treeViewItemViewModel.IsDirectory ?? true,
@@ -241,6 +244,9 @@ namespace FromSoftwareGameSaves.ViewModel
 
             if (!HasDummyChild)
                 return;
+
+            if (Parent != null && !Parent.IsExpanded)
+                Parent.IsExpanded = true;
 
             await ExpandAsync();
 

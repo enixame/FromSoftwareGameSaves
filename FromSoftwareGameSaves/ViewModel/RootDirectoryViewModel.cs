@@ -14,7 +14,7 @@ namespace FromSoftwareGameSaves.ViewModel
             ImagePath = ImageHelper.BuildImageSourceFromDatabase(fromSoftwareFile.GameName);
         }
 
-        public string RootName => FromSoftwareFile.FileName;
+        public string RootName => FromSoftwareFile.GameName;
 
         public ImageSource ImagePath { get; }
     }

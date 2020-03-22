@@ -2,6 +2,7 @@
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using FromSoftwareStorage;
@@ -11,8 +12,18 @@ namespace FromSoftwareGameSaves.Utils
 {
     public static class ImageHelper
     {
-        private static readonly BitmapImage DefaultImage = new BitmapImage();
-      
+        private const string DefaultResourceImage = "FromSoftwareGameSaves.Images.default.png";
+        private static readonly ImageSource DefaultImage;
+
+        static ImageHelper()
+        {
+            Assembly assembly = typeof(ImageHelper).Assembly;
+            using (Stream resourceStream = assembly.GetManifestResourceStream(DefaultResourceImage))
+            {
+                DefaultImage = CreateBitmapImageSourceFromStream(resourceStream);
+            }
+        }
+
         public static ImageSource BuildImageSourceFromDatabase(string gameName)
         {
             using (DataEntities dataEntities = Database.DatabaseProvider.GetEntities(ConnectionStrings.DataEntities))

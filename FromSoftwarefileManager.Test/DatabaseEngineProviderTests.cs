@@ -73,6 +73,35 @@ namespace FromSoftwareGameSaves.Test
    
         }
 
+        [Test]
+        public void InsertNewGameWithoutImageTest()
+        {
+            IDatabaseProvider databaseProvider = Database.DatabaseProvider;
+            using (DataEntities dataEntities = databaseProvider.GetEntities(ConnectionStringName))
+            {
+                DbSet<Game> dataEntitiesGames = dataEntities.Games;
+
+                Game newGame = dataEntitiesGames.Create();
+                newGame.Name = "Test";
+                newGame.ChangeDate = DateTime.Now;
+                newGame.DefaultFileName = "Test.txt";
+                newGame.Directory = "Test";
+                newGame.FileSearchPattern = "*.txt";
+                newGame.ReadOnly = false;
+                newGame.Folder = new Folder() { Name = "Test", FolderPath = @"C:\", ReadOnly = false };
+                dataEntitiesGames.Add(newGame);
+                dataEntities.SaveChanges();
+
+                IQueryable<Game> query = from game in dataEntitiesGames
+                    where game.Name.Equals("Test")
+                    select game;
+                var gameWihTestName = query.FirstOrDefault();
+
+                Assert.That(gameWihTestName, Is.EqualTo(newGame));
+            }
+
+        }
+
         public static async Task<byte[]> GetBinaryResourceAsync(string resourceName)
         {
             Assembly assembly = typeof(DatabaseEngineProviderTests).Assembly;
