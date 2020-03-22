@@ -75,18 +75,24 @@
     <Compile Include="Model\File.cs" />
     <Compile Include="Model\GameFile.cs" />
     <Compile Include="Repository\FileRepository.cs" />
+    <Compile Include="Template\ViewDataTemplateSelector.cs" />
     <Compile Include="Utils\ConnectionStrings.cs" />
     <Compile Include="Utils\ImageHelper.cs" />
     <Compile Include="Utils\MessageBoxHelper.cs" />
+    <Compile Include="ViewModel\DataInstallationViewModel.cs" />
     <Compile Include="ViewModel\DragDropFileViewModel.cs" />
     <Compile Include="ViewModel\DragDropInfoViewModel.cs" />
     <Compile Include="ViewModel\FileViewModel.cs" />
     <Compile Include="ViewModel\ITreeViewItemViewModel.cs" />
     <Compile Include="ViewModel\GameTreeViewModel.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ParametersViewModel.cs" />
     <Compile Include="ViewModel\RootDirectoryViewModel.cs" />
     <Compile Include="ViewModel\TreeViewItemViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
+    <Compile Include="View\DataInstallationView.xaml.cs">
+      <DependentUpon>DataInstallationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\GameTreeControl.xaml.cs">
       <DependentUpon>GameTreeControl.xaml</DependentUpon>
     </Compile>
@@ -106,6 +112,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\DataInstallationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\GameTreeControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -167,6 +177,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Images\default.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
