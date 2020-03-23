@@ -1,5 +1,4 @@
 ﻿using System.Windows.Controls;
-using FromSoftwareGameSaves.ViewModel;
 
 namespace FromSoftwareGameSaves.View
 {
@@ -11,9 +10,6 @@ namespace FromSoftwareGameSaves.View
         public GameTreeControl()
         {
             InitializeComponent();
-
-            var viewModel = new GameTreeViewModel();
-            DataContext = viewModel;
         }
     }
 }

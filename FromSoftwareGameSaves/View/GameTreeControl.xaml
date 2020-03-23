@@ -11,8 +11,10 @@
 
     <UserControl.InputBindings>
         <KeyBinding Key="F2" Command="{Binding Edit, Mode=OneTime}" />
+        <KeyBinding Key="F5" Command="{Binding Refresh, Mode=OneTime}" />
         <KeyBinding Key="Enter" Command="{Binding Commit, Mode=OneTime}" />
         <KeyBinding Key="Escape" Command="{Binding Cancel, Mode=OneTime}" />
+        <KeyBinding Key="Delete" Command="{Binding Delete, Mode=OneTime}" />
     </UserControl.InputBindings>
 
     <Grid>
@@ -147,8 +149,8 @@
 
                 <HierarchicalDataTemplate DataType="{x:Type viewModel:RootDirectoryViewModel}" ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal" Margin="2" AllowDrop="False">
-                        <Image Width="32" Height="32" Margin="3,0" Source="{Binding ImagePath}" />
-                        <TextBlock VerticalAlignment="Center" FontSize="14" FontWeight="Bold" Text="{Binding RootName}" />
+                        <Image Width="50" Height="50" Margin="3,0" Source="{Binding ImagePath}" />
+                        <TextBlock VerticalAlignment="Center" FontSize="18" FontWeight="Bold" Text="{Binding RootName}" />
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseRightButtonDown">
                                 <i:InvokeCommandAction Command="{Binding Root.TreeViewItemRigthClick}" CommandParameter="{Binding}" />
@@ -160,7 +162,20 @@
                 <DataTemplate x:Key="NormalTemplate">
                     <StackPanel Orientation="Horizontal" Margin="2">
                         <Image Width="16" Height="16" Margin="3,0" Style="{StaticResource IconItemStyle}"/>
-                            <TextBlock Text="{Binding FileName}" />
+                        <TextBlock Text="{Binding FileName}">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="FontSize" Value="12"/>
+                                    <Setter Property="FontWeight" Value="Normal"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsDirectory, Mode=OneTime}" Value="True">
+                                            <Setter Property="FontSize" Value="14"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseRightButtonDown">
                                 <i:InvokeCommandAction Command="{Binding Root.TreeViewItemRigthClick}" CommandParameter="{Binding}" />

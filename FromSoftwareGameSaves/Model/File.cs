@@ -1,4 +1,6 @@
-﻿namespace FromSoftwareGameSaves.Model
+﻿using FromSoftwareStorage.Interface;
+
+namespace FromSoftwareGameSaves.Model
 {
     public sealed class FromSoftwareFile : GameFile
     {
@@ -9,6 +11,8 @@
             IsDirectory = isDirectory;
             Path = path;
         }
+
+        public string GameName { get; internal set; }
 
         public string FileName { get; }
 

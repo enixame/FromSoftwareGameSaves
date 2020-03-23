@@ -9,11 +9,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FromSoftwareGameSaves</RootNamespace>
     <AssemblyName>FromSoftwareGameSaves</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,11 +36,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -69,17 +75,23 @@
     <Compile Include="Model\File.cs" />
     <Compile Include="Model\GameFile.cs" />
     <Compile Include="Repository\FileRepository.cs" />
+    <Compile Include="Utils\ConnectionStrings.cs" />
     <Compile Include="Utils\ImageHelper.cs" />
     <Compile Include="Utils\MessageBoxHelper.cs" />
+    <Compile Include="ViewModel\DataInstallationViewModel.cs" />
     <Compile Include="ViewModel\DragDropFileViewModel.cs" />
     <Compile Include="ViewModel\DragDropInfoViewModel.cs" />
     <Compile Include="ViewModel\FileViewModel.cs" />
     <Compile Include="ViewModel\ITreeViewItemViewModel.cs" />
     <Compile Include="ViewModel\GameTreeViewModel.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ParametersViewModel.cs" />
     <Compile Include="ViewModel\RootDirectoryViewModel.cs" />
     <Compile Include="ViewModel\TreeViewItemViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
+    <Compile Include="View\DataInstallationView.xaml.cs">
+      <DependentUpon>DataInstallationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\GameTreeControl.xaml.cs">
       <DependentUpon>GameTreeControl.xaml</DependentUpon>
     </Compile>
@@ -99,6 +111,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\DataInstallationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\GameTreeControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -145,25 +161,20 @@
     <Resource Include="Images\folder.png" />
     <Resource Include="Images\openfolder.png" />
     <Resource Include="Images\delete.png" />
-    <Content Include="Images\Sekiro.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Resource Include="Images\synchro.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FromSoftwareModel\FromSoftwareModel.csproj">
-      <Project>{eed738bc-d73d-4c71-888e-09f07fda0be3}</Project>
-      <Name>FromSoftwareModel</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FromSofwareFileManager\FromSoftwareFileManager.csproj">
       <Project>{91df4728-584e-4cdf-8c1c-e45f1d78a5a2}</Project>
       <Name>FromSoftwareFileManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FromSofwareStorage\FromSoftwareStorage.csproj">
+      <Project>{290AF0ED-9F2D-4B07-9F1C-6D9BB9CDC453}</Project>
+      <Name>FromSoftwareStorage</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\DarkSoulsIII.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="Images\default.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
