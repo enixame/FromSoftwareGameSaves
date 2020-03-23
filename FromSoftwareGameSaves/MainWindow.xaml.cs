@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using FromSoftwareGameSaves.ViewModel;
 
 namespace FromSoftwareGameSaves
 {
@@ -10,6 +11,7 @@ namespace FromSoftwareGameSaves
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = new MainViewModel();
         }
     }
 }

@@ -60,6 +60,10 @@ namespace FromSoftwareStorage
             string connectionString = DatabaseEngineProvider.BuildConnectionString(DatabaseFileName, password);
             if (!DataBaseExists)
             {
+                string databaseDirectory = Path.GetDirectoryName(DatabaseFileName);
+                if (!string.IsNullOrEmpty(databaseDirectory) && !Directory.Exists(databaseDirectory))
+                    Directory.CreateDirectory(databaseDirectory);
+
                 GenerateNewKeys(password);
                 DoCreation(connectionString);
             }

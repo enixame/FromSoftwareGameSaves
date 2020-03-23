@@ -33,6 +33,7 @@ namespace FromSoftwareStorage
             return sqlCeConnectionStringBuilder.ConnectionString;
         }
 
+        public string DataBaseFileName => _installer.DatabaseFileName;
         public bool IsDatabaseInstalled => _installer.DataBaseExists;
         public bool HasDatabasePassword => _installer.HasPrivateKey && _installer.HasPublicKey;
 

@@ -75,7 +75,6 @@
     <Compile Include="Model\File.cs" />
     <Compile Include="Model\GameFile.cs" />
     <Compile Include="Repository\FileRepository.cs" />
-    <Compile Include="Template\ViewDataTemplateSelector.cs" />
     <Compile Include="Utils\ConnectionStrings.cs" />
     <Compile Include="Utils\ImageHelper.cs" />
     <Compile Include="Utils\MessageBoxHelper.cs" />

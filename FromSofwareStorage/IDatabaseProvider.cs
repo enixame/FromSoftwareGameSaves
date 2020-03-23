@@ -5,6 +5,8 @@ namespace FromSoftwareStorage
 {
     public interface IDatabaseProvider
     {
+        string DataBaseFileName { get; }
+
         bool IsDatabaseInstalled { get; }
 
         bool HasDatabasePassword { get; }
